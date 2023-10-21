@@ -1,0 +1,7 @@
+{
+  "name": "chefcito",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
