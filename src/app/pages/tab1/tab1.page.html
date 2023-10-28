@@ -1,0 +1,47 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+      <ion-title>
+          Bienvenido,
+          <ion-text *ngIf="user">
+            {{user.name}}
+            <ion-text>{{user.lastName}}</ion-text>
+          </ion-text>
+      </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content :fullscreen="true">
+  <ion-card>
+    <ion-card-content>
+      <ion-list class="border" lines="none">
+        <ion-item>
+          <ion-thumbnail slot="center">
+            <ion-img></ion-img>
+          </ion-thumbnail>
+          <ion-list lines="none">Escanea <ion-text class="color" [routerLink]="['/clientes/:user/qr']"> Aqui</ion-text> El codigo qr a la entrada del
+            restaurant 
+          </ion-list>
+          <ion-icon name="qr-code-outline" slot="end" [routerLink]="['/clientes/:user/qr']"></ion-icon>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-card>
+  <ion-card class="ion-activatable">
+    <ion-card-content>
+      <ion-list class="border" lines="none">
+        <ion-item>
+          <ion-label [routerLink]="['/clientes/:user/tab2']">Revisa nuestro Menu</ion-label>
+          <ion-icon name="receipt-outline" [routerLink]="['/clientes/:user/tab2']" ></ion-icon>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-card>
+  <ion-card class="ion-activatable">
+    <img alt=""
+      src="https://mimercadosaludable.com/img/leoblog/b/1/26/lg-b-banner-blog-ratatouille-villasantos.jpg" />
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-card>
+  <ion-title class="ion-text-center color">Espacio de Publicidad</ion-title>
+</ion-content>

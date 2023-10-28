@@ -1,0 +1,40 @@
+<ion-content [fullscreen]="true">
+  <ion-header>
+    <ion-toolbar>
+      <ion-segment [(ngModel)]="seleccionado" (ionChange)="cambiarSegmento($event)">
+        <ion-segment-button *ngFor="let tipo of foodTypes" [value]="tipo._id">
+          <ion-label>{{ tipo.name }}</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </ion-toolbar>
+  </ion-header>
+  <ion-card *ngIf="seleccionado">
+    <ion-card-content>
+      <ng-container *ngFor="let foodType of foodTypes">
+        <ng-container *ngIf="seleccionado === foodType._id">
+          <!-- <h2>{{ foodType.name }}</h2> -->
+          <ion-list>
+            <ion-item *ngFor="let food of foodsByType[foodType._id]">
+              <ion-thumbnail slot="start">
+                <ion-img [src]="food.img" alt="{{ food.name }}"></ion-img>
+              </ion-thumbnail>
+              <ion-label>
+                <h2>{{ food.name }}</h2>
+                <p>{{ food.desc }}</p>
+                <p>Precio: {{ food.price }}</p>
+              </ion-label>
+              <ion-button shape="round" (click)="agregarAlCarrito(food)">
+                <ion-icon name="add-outline"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </ion-list>
+        </ng-container>
+      </ng-container>
+    </ion-card-content>
+  </ion-card>
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
+    <ion-fab-button (click)="abrirModal()" [disabled]="modalButtonDisabled">
+      <ion-icon name="cart-outline"></ion-icon>
+    </ion-fab-button> 
+  </ion-fab>
+</ion-content>

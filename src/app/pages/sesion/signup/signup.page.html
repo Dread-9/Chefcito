@@ -1,0 +1,42 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Registrarse</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content :fullscreen="true">
+  <form (ngSubmit)="signUp()" #form="ngForm">
+    <ion-item>
+      <ion-label position="floating"></ion-label>
+        <ion-input label="Email" labelPlacement="floating" placeholder="Escribe tu Email" type="email" id="email" [(ngModel)]="SignUpFormulario.email" name="email" #email="ngModel" email required> </ion-input>
+        <p class="error" *ngIf="email.errors?.['email']">Escribe un email valido</p>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating"></ion-label>
+      <ion-input label="Contraseña" labelPlacement="floating" placeholder="Escribe tu Contraseña" id="password" type="password" [(ngModel)]="SignUpFormulario.password" name="password" #password="ngModel"required></ion-input>
+      <p class="error" *ngIf="password.errors?.['password']">Contraseña invalida</p>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating"></ion-label>
+      <ion-input label="Nombre" labelPlacement="floating" type="text" [(ngModel)]="SignUpFormulario.nombre" name="name" #name="ngModel" id="name" required></ion-input>
+      <p class="error" *ngIf="name.errors?.['name']">Nombre Invalido</p>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating"></ion-label>
+      <ion-input label="Apellido" labelPlacement="floating" type="text" [(ngModel)]="SignUpFormulario.apellido" name="lastname" #lastname="ngModel" id="lastname" required></ion-input>
+      <p class="error" *ngIf="lastname.errors?.['lastname']">Apellido invalido</p>
+    </ion-item>
+    <ion-button type="submit" expand="block" [disabled]="!isValidForm(form)">
+      Crear Cuenta
+    </ion-button>
+  </form>
+  <ion-text class="ion-text-center">
+    <h6>¿Estas listo con tu registro?</h6>
+  </ion-text>
+  <ion-text class="ion-text-center color" [routerLink]="['/']">
+    <h6>Tienes Cuenta?</h6>
+  </ion-text>
+</ion-content>

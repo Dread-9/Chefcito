@@ -1,0 +1,35 @@
+<!-- <ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title class="ion-text-center">Login</ion-title>
+  </ion-toolbar>
+</ion-header> -->
+
+<ion-content :fullscreen="true">
+  <ion-avatar>
+    <img src="https://ionicframework.com/docs/img/demos/avatar.svg">
+  </ion-avatar>
+  <form (ngSubmit)="login()" #form="ngForm">
+    <ion-item>
+      <ion-label position="floating"></ion-label>
+        <ion-input label="Email" labelPlacement="floating" placeholder="Escribe tu Email" type="email" id="email" [(ngModel)]="LoginFormulario.email" name="email" #email="ngModel" email required> </ion-input>
+        <p class="error" *ngIf="email.errors?.['email']">Escribe un email valido</p>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating"></ion-label>
+        <ion-input label="Contraseña" labelPlacement="floating" placeholder="Escribe tu Contraseña" type="password" id="password" [(ngModel)]="LoginFormulario.password" name="password" #password="ngModel" password required> </ion-input>
+        <p class="error" *ngIf="password.errors?.['password']">Contraseña invalida</p>
+    </ion-item>
+    <ion-text class="ion-text-end color"  [routerLink]="['/recoverpassword']">
+      <h6>¿Olvidaste Tu Constraseña?</h6>
+    </ion-text>
+    <ion-button type="submit" expand="block" value="Enviar" [disabled]="!isValidForm(form)">
+      Iniciar Sesion
+    </ion-button>
+  </form>
+  <ion-text class="ion-text-center">
+    <h6>¿No Tienes cuenta?</h6>
+  </ion-text>
+  <ion-text class="ion-text-center color"  [routerLink]="['/signup']">
+    <h6>Crear Cuenta</h6>
+  </ion-text>
+</ion-content>
