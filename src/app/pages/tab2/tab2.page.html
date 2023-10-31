@@ -5,8 +5,17 @@
 </ion-header>
 <ion-content [fullscreen]="true">
   <ion-header>
-      <p>Fecha de la reserva :{{fechaA}}</p>
-      <p>Mesa Reservada:</p>
+    <ion-card class="ion-activatable" >
+      <ion-card-content>
+        <ion-list class="border" lines="none">
+          <ion-item>
+            <p>Fecha de la reserva :{{fechaA}}</p>
+            <p>Mesa Reservada:</p>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-card>
     <ion-toolbar>
       <ion-segment [(ngModel)]="seleccionado" (ionChange)="cambiarSegmento($event)" mode="ios">
         <ion-segment-button *ngFor="let tipo of foodTypes" [value]="tipo._id">

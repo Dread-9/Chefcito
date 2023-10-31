@@ -61,20 +61,39 @@ export class LoginPage implements OnInit {
         });
         if (response.ok) {
           const responseData = await response.json();
-          this.auth.login(requestData);
+          this.auth.login(responseData); // Marca al usuario como autenticado
+          this.auth.setToken(responseData.token); // Configura el token y su tiempo de expiración
           this.limpiarCampos();
-          this.user.setUser(responseData.user);
-          this.toastService.showToast(this.mensajesGlobal.SOLICITUD_SESION.MSJ_SESION_EXITOS.login, 'success', 3000);
-          this.router.navigate(['/clientes', responseData.user.name, 'tab1']);
+          const token = this.auth.getToken(); // Verifica si el token ha expirado
+          if (token) {
+            this.user.setUser(responseData.user);
+            this.toastService.showToast(
+              this.mensajesGlobal.SOLICITUD_SESION.MSJ_SESION_EXITOS.login,
+              'success',
+              3000
+            );
+            this.router.navigate(['/clientes', responseData.token, 'tab1']);
+          } else {
+            // El token ha expirado, realiza la redirección a la página principal
+            this.router.navigate(['/']);
+            this.toastService.showToast(
+              'La sesión ha expirado. Por favor, inicia sesión nuevamente.',
+              'danger',
+              3000
+            );
+          }
         } else {
           const errorData = await response.json();
           this.toastService.showToast(errorData.msg, 'danger', 3000);
         }
       } catch (error) {
         console.error('Ocurrió un error inesperado:', error);
-        this.toastService.showToast('Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.', 'danger', 3000);
-      }
-      finally {
+        this.toastService.showToast(
+          'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.',
+          'danger',
+          3000
+        );
+      } finally {
         await loading.dismiss();
       }
     }

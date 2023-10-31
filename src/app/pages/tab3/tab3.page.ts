@@ -58,6 +58,7 @@ export class Tab3Page {
           text: 'Cerrar Sesión',
           handler: async () => {
             await this.handleLogout();
+            this.auth.logout();
           }
         }
       ]
@@ -66,13 +67,11 @@ export class Tab3Page {
   }
   async onLogoutClick() {
     this.checkAppMode();
-    this.auth.logout();
     await this.showLogoutConfirmationAlert();
   }
 
   async checkAppMode() {
     const checkIsDarkMode = await Preferences.get({ key: 'darkModeActivated' });
-    console.log(checkIsDarkMode);
     checkIsDarkMode?.value == 'true'
       ? (this.darkMode = true)
       : (this.darkMode = false);
