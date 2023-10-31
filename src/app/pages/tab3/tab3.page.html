@@ -26,6 +26,16 @@
     </ion-card-content>
     <ion-ripple-effect></ion-ripple-effect>
   </ion-card>
+  <ion-card class="ion-activatable" >
+    <ion-card-content>
+      <ion-list class="border" lines="none">
+        <ion-item>
+          <ion-toggle mode="ios" [checked]="darkMode" (ionChange)="toggleDarkMode()" justify="space-between">Modo Oscuro</ion-toggle>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-card>
   <div class="button-container">
     <ion-button fill="outline">
       <ion-icon name="person-circle-outline" aria-hidden="true"></ion-icon>

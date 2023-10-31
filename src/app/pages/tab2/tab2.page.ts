@@ -18,6 +18,7 @@ export class Tab2Page {
   foodsByType: { [key: string]: any[] } = {};
   carrito: Food[] = [];
   modalButtonDisabled: boolean = true;
+  fechaA!: string;
   constructor(
     private toastService: ToastService,
     private modalController: ModalController,
@@ -26,8 +27,14 @@ export class Tab2Page {
   ) { }
 
   ngOnInit() {
-    this.typeFood()
-    this.food()
+    this.typeFood();
+    this.food();
+    this.fecha();
+  }
+  fecha() {
+    const fechaActual = new Date();
+    const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    this.fechaA = fechaActual.toLocaleDateString('es-ES', options);
   }
 
   typeFood() {

@@ -1,9 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UserService } from '../../services/user.service';
-// import { Barcode, BarcodeScanner } from '@capacitor-community/barcode-scanner'
-import { Barcode, BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
-import { AlertController, LoadingController, Platform, ToastController } from '@ionic/angular';
+import { LoadingController, Platform } from '@ionic/angular';
 import jsQR from 'jsqr';
+import { ReservationService } from '../../services/reservation.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-qr',
@@ -16,8 +16,10 @@ export class QrPage implements OnInit {
   @ViewChild('fileinput', { static: false }) fileinput!: ElementRef;
 
   qrCodeString = 'Bienvenido a Chefcito';
-  fechaA!: Date;
+  fechaA!: string;
   user: any;
+
+  reservations!: any[];
 
   canvasElement: any;
   videoElement: any;
@@ -28,10 +30,10 @@ export class QrPage implements OnInit {
 
   constructor(
     private userService: UserService,
-    private alertController: AlertController,
-    private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,
-    private plt: Platform
+    private plt: Platform,
+    private reservation: ReservationService,
+    private router: Router,
   ) {
     const isInStandaloneMode = () =>
       'standalone' in window.navigator && window.navigator['standalone'];
@@ -43,36 +45,22 @@ export class QrPage implements OnInit {
     this.user = this.userService.getUser();
     this.fecha();
   }
+  async reserva() {
+    this.reservation.getReservations().subscribe((data: any) => {
+      this.reservations = data;
+    });
+    this.router.navigate(['clientes/:user/tab2']);
+  }
   fecha() {
-    const fechaActual: Date = new Date();
-    this.fechaA = fechaActual;
+    const fechaActual = new Date();
+    const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    this.fechaA = fechaActual.toLocaleDateString('es-ES', options);
   }
   ngAfterViewInit() {
     this.canvasElement = this.canvas.nativeElement;
     this.canvasContext = this.canvasElement.getContext('2d');
     this.videoElement = this.video.nativeElement;
   }
-  // async showQrToast() {
-  //   if (this.scanResult !== null) {
-  //     const toast = await this.toastCtrl.create({
-  //       message: `Open ${this.scanResult}?`,
-  //       position: 'top',
-  //       buttons: [
-  //         {
-  //           text: 'Open',
-  //           handler: () => {
-  //             if (this.scanResult) {
-  //               window.open(this.scanResult, '_system', 'location=yes');
-  //             }
-  //           }
-  //         }
-  //       ]
-  //     });
-  //     toast.present();
-  //   } else {
-  //     console.log("No scan result to display.");
-  //   }
-  // }
   reset() {
     this.scanResult = null;
   }
@@ -128,7 +116,6 @@ export class QrPage implements OnInit {
       if (code) {
         this.scanActive = false;
         this.scanResult = code.data;
-        // this.showQrToast();
       } else {
         if (this.scanActive) {
           requestAnimationFrame(this.scan.bind(this));
@@ -162,7 +149,6 @@ export class QrPage implements OnInit {
 
           if (code) {
             this.scanResult = code.data;
-            // this.showQrToast();
           }
         };
         img.src = URL.createObjectURL(file);

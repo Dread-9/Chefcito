@@ -12,4 +12,15 @@ export const url = {
             typefood: `${BASE_URL}/type/food`,
         }
     },
+    urlReservation: {
+        reservations: {
+            reservation: `${BASE_URL}/reservation`,
+        }
+    },
+    urlOrder: {
+        orders: {
+            order: `${BASE_URL}/order`,
+            typeorder: `${BASE_URL}/type/order`,
+        }
+    },
 };

@@ -1,7 +1,14 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+      <ion-title> Detalles de la reserva</ion-title>
+  </ion-toolbar>
+</ion-header>
 <ion-content [fullscreen]="true">
   <ion-header>
+      <p>Fecha de la reserva :{{fechaA}}</p>
+      <p>Mesa Reservada:</p>
     <ion-toolbar>
-      <ion-segment [(ngModel)]="seleccionado" (ionChange)="cambiarSegmento($event)">
+      <ion-segment [(ngModel)]="seleccionado" (ionChange)="cambiarSegmento($event)" mode="ios">
         <ion-segment-button *ngFor="let tipo of foodTypes" [value]="tipo._id">
           <ion-label>{{ tipo.name }}</ion-label>
         </ion-segment-button>
