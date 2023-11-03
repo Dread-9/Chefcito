@@ -5,6 +5,12 @@ import { AlertController } from '@ionic/angular';
 import { FoodType, Food } from '../../models/interfaceFood';
 import { FoodService } from '../../services/food.service';
 import { ToastService } from '../../services/toast.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Reservation, Sale } from '../../models/interfaceReservation';
+import { UserService } from '../../services/user.service';
+import { SharedService } from '../../services/shared.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab2',
@@ -12,6 +18,10 @@ import { ToastService } from '../../services/toast.service';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page {
+  detalleDelProducto: Food | null = null;
+
+  token: any;
+
   seleccionado!: string;
   foodTypes!: FoodType[];
   Food!: Food[];
@@ -19,17 +29,59 @@ export class Tab2Page {
   carrito: Food[] = [];
   modalButtonDisabled: boolean = true;
   fechaA!: string;
+  reservations!: Reservation;
+  sales!: Sale;
+  sale: any;
+  reservation: any;
+  sharedDataService: SharedService;
+  user: any;
   constructor(
     private toastService: ToastService,
     private modalController: ModalController,
     private alertController: AlertController,
-    private foodService: FoodService
-  ) { }
-
+    private foodService: FoodService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private userService: UserService,
+    sharedDataService: SharedService,
+    private auth: AuthService,
+    private navCtrl: NavController
+  ) {
+    this.sharedDataService = sharedDataService;
+  }
   ngOnInit() {
     this.typeFood();
     this.food();
     this.fecha();
+    this.route.queryParams.subscribe((params) => {
+      this.reservation = JSON.parse(params['reservation']);
+      this.sale = JSON.parse(params['sale']);
+    });
+    this.user = this.userService.getUser();
+    this.token = this.auth.getToken();
+  }
+  async cancelReservation() {
+    const alert = await this.alertController.create({
+      header: '¿Estás seguro de cancelar tu reserva?',
+      message: 'Esta acción no se puede deshacer.',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            // El usuario eligió cancelar la acción
+          }
+        },
+        {
+          text: 'Sí, cancelar',
+          handler: () => {
+            this.toastService.showToast('Se ha cancelado la Reseva de la mesa: ', 'success', 3000);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
   fecha() {
     const fechaActual = new Date();
@@ -106,7 +158,7 @@ export class Tab2Page {
     if (index >= 0) {
       this.carrito.splice(index, 1);
       this.toastService.showToast(`${producto.name} se eliminó del carrito`, 'success', 3000);
-      this.updateModalButtonState(); // Actualiza el estado del botón del modal
+      this.updateModalButtonState();
     }
   }
   async abrirModal() {
@@ -121,4 +173,16 @@ export class Tab2Page {
       await modal.present();
     }
   }
-}
+
+  async alert() {
+    const alert = await this.alertController.create({
+      header: 'Mensaje informativo',
+      message: 'Solo puedes realizar un pedido si tienes una reserva de mesa habilitada.',
+      buttons: ['Entendido'],
+    });
+    await alert.present();
+  }
+  verDetalles(foodId: string) {
+    this.router.navigate(['/clientes', this.token, 'tab2', 'food', foodId]);
+  }
+} 

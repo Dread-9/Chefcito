@@ -25,14 +25,14 @@ export class AuthService {
 
   setToken(token: string) {
     localStorage.setItem('authToken', token);
-    this.tokenExpiration = Date.now() + 3600000;
+    this.tokenExpiration = Date.now() + 43200000;
     // this.tokenExpiration = Date.now() + 60000; // 1 minuto en milisegundos
     localStorage.setItem('authTokenExpiration', this.tokenExpiration.toString());
 
     setTimeout(() => {
-      console.log('¡El token ha expirado localmente!');
+      // console.log('¡El token ha expirado localmente!');
       this.showTokenExpiredAlert();
-    }, 3600000);
+    }, 43200000);
   }
 
   async showTokenExpiredAlert() {
@@ -43,7 +43,7 @@ export class AuthService {
         {
           text: 'Aceptar',
           handler: () => {
-            console.log('Redirigiendo a la página principal');
+            // console.log('Redirigiendo a la página principal');
             this.router.navigate(['/']);
             this.logout();
           }

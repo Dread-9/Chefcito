@@ -18,10 +18,10 @@
           <ion-thumbnail slot="center">
             <ion-img></ion-img>
           </ion-thumbnail>
-          <ion-list lines="none">Escanea <ion-text class="color" [routerLink]="['/clientes/:user/qr']"> Aqui</ion-text> El codigo qr a la entrada del
+          <ion-list lines="none">Escanea <ion-text class="color" [routerLink]="['/clientes/'+ token +'/qr']"> Aqui</ion-text> El codigo qr a la entrada del
             restaurant 
           </ion-list>
-          <ion-icon name="qr-code-outline" slot="end" [routerLink]="['/clientes/:user/qr']"></ion-icon>
+          <ion-icon name="qr-code-outline" slot="end" [routerLink]="['/clientes/'+ token +'/qr']"></ion-icon>
         </ion-item>
       </ion-list>
     </ion-card-content>
@@ -30,9 +30,9 @@
   <ion-card class="ion-activatable">
     <ion-card-content>
       <ion-list class="border" lines="none">
-        <ion-item>
-          <ion-label [routerLink]="['/clientes/:user/tab2']">Revisa nuestro Menu</ion-label>
-          <ion-icon name="receipt-outline" [routerLink]="['/clientes/:user/tab2']" ></ion-icon>
+        <ion-item >
+          <ion-label [routerLink]="'/clientes/' + token + '/tab2'">Revisa nuestro Menú</ion-label>
+          <ion-icon name="receipt-outline" [routerLink]="'/clientes/' + token + '/tab2'"></ion-icon>          
         </ion-item>
       </ion-list>
     </ion-card-content>

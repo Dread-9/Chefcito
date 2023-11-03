@@ -1,12 +1,15 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-      <ion-title>
-          Bienvenido,
-          <ion-text *ngIf="user">
-            {{user.name}}
-            <ion-text>{{user.lastName}}</ion-text>
-          </ion-text>
-      </ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>  
+    <ion-title>
+        Bienvenido,
+        <ion-text *ngIf="user">
+          {{user.name}}
+          <ion-text>{{user.lastName}}</ion-text>
+        </ion-text>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
@@ -22,18 +25,19 @@
   </ion-card>
   <input #fileinput type="file" accept="image/*;capture=camera" hidden (change)="handleFile(fileinput.files)">
 
-  <ion-button expand="full" (click)="captureImage()">
+  <ion-button expand="full" (click)="captureImage()" [disabled]="scanActive || scanResultAvailable">
     <ion-icon slot="start" name="camera"></ion-icon>
   </ion-button>
-
+  
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="startScan()">
-      <ion-icon name="scan" ></ion-icon>
+    <ion-fab-button (click)="startScan()" [disabled]="scanActive || scanResultAvailable">
+      <ion-icon name="scan"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+    
   <ion-fab vertical="bottom" horizontal="start" slot="fixed">
     <ion-fab-button (click)="reset()" color="warning" *ngIf="scanResult">
-      <ion-icon name="refresh" ></ion-icon>
+      <ion-icon name="refresh"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 
@@ -54,7 +58,7 @@
       {{ scanResult }} 
     </ion-card-content>
     <ion-button expand="full" (click)="reserva()" >
-      <ion-icon name="calendar-outline"></ion-icon>
+      <ion-icon name="calendar-outline" slot="start"></ion-icon>
       Reservar
     </ion-button>
   </ion-card>

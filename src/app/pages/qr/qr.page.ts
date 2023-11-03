@@ -4,6 +4,13 @@ import { LoadingController, Platform } from '@ionic/angular';
 import jsQR from 'jsqr';
 import { ReservationService } from '../../services/reservation.service';
 import { Router } from '@angular/router';
+import { ToastService } from 'src/app/services/toast.service';
+import { AuthService } from '../../services/auth.service';
+import { catchError, map, of } from 'rxjs';
+import { Reservation, Sale } from '../../models/interfaceReservation';
+import { SharedService } from '../../services/shared.service';
+import { LocalNotificationsService } from '../../services/local-notifications.service';
+
 
 @Component({
   selector: 'app-qr',
@@ -11,6 +18,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./qr.page.scss'],
 })
 export class QrPage implements OnInit {
+  reservations!: Reservation;
+  sales!: Sale;
+
   @ViewChild('video', { static: false }) video!: ElementRef;
   @ViewChild('canvas', { static: false }) canvas!: ElementRef;
   @ViewChild('fileinput', { static: false }) fileinput!: ElementRef;
@@ -18,22 +28,25 @@ export class QrPage implements OnInit {
   qrCodeString = 'Bienvenido a Chefcito';
   fechaA!: string;
   user: any;
-
-  reservations!: any[];
-
   canvasElement: any;
   videoElement: any;
   canvasContext: any;
   scanActive = false;
+  scanResultAvailable = false;
   scanResult: string | null = null;
   loading!: HTMLIonLoadingElement;
 
   constructor(
+    private auth: AuthService,
     private userService: UserService,
     private loadingCtrl: LoadingController,
     private plt: Platform,
     private reservation: ReservationService,
     private router: Router,
+    private toastService: ToastService,
+    private sharedDataService: SharedService,
+    private localNotificationsService: LocalNotificationsService
+
   ) {
     const isInStandaloneMode = () =>
       'standalone' in window.navigator && window.navigator['standalone'];
@@ -46,10 +59,44 @@ export class QrPage implements OnInit {
     this.fecha();
   }
   async reserva() {
-    this.reservation.getReservations().subscribe((data: any) => {
-      this.reservations = data;
-    });
-    this.router.navigate(['clientes/:user/tab2']);
+    try {
+      const token = this.auth.getToken();
+      const inputJSON: string | null = this.scanResult!;
+      const parsedInput = JSON.parse(inputJSON);
+      const tableValue = parsedInput.table;
+      const requestBody = { table: tableValue, user: this.user._id };
+      console.log('Request', requestBody);
+      this.reservation.postReservations(token, requestBody)
+        .pipe(
+          map((response: any) => {
+            const reservationData: Reservation = response.reservation;
+            const saleData: Sale = response.sale;
+            this.sharedDataService.setReservations(reservationData);
+            this.sharedDataService.setSales(saleData);
+            this.router.navigate(['clientes', token, 'tab2'], {
+              queryParams: {
+                reservationData: JSON.stringify(reservationData),
+                saleData: JSON.stringify(saleData),
+              }
+            });
+            this.localNotificationsService.scheduleNotification(
+              'Reserva',
+              'Reserva realizada de manera exitosa',
+              new Date(new Date().getTime() + 3000)
+            );
+            this.toastService.showToast('Reserva realizada de manera exitosa', 'success', 3000);
+            return response;
+          }),
+          catchError((error) => {
+            const errorData = error.error;
+            this.toastService.showToast(errorData.msg, 'danger', 3000);
+            return of(null);
+          })
+        )
+        .subscribe();
+    } catch (error) {
+      this.toastService.showToast('Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.', 'danger', 3000);
+    }
   }
   fecha() {
     const fechaActual = new Date();
@@ -63,6 +110,8 @@ export class QrPage implements OnInit {
   }
   reset() {
     this.scanResult = null;
+    this.scanResultAvailable = false;
+    this.scanResult = null;
   }
 
   stopScan() {
@@ -70,6 +119,7 @@ export class QrPage implements OnInit {
   }
 
   async startScan() {
+    this.scanActive = true;
     const stream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: 'environment' }
     });
@@ -116,6 +166,8 @@ export class QrPage implements OnInit {
       if (code) {
         this.scanActive = false;
         this.scanResult = code.data;
+        this.scanResultAvailable = true;
+        console.log('Respuesta', this.scanResult)
       } else {
         if (this.scanActive) {
           requestAnimationFrame(this.scan.bind(this));
@@ -149,6 +201,8 @@ export class QrPage implements OnInit {
 
           if (code) {
             this.scanResult = code.data;
+            this.scanResultAvailable = true;
+            console.log('Respuesta', this.scanResult)
           }
         };
         img.src = URL.createObjectURL(file);

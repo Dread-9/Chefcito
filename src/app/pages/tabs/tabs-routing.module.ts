@@ -61,7 +61,17 @@ const routes: Routes = [
               import('../qr/qr.module').then(m => m.QrPageModule)
           }
         ]
-      }
+      },
+      {
+        path: 'foodmodal',
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../foodmodal/foodmodal.module').then(m => m.FoodmodalPageModule)
+          }
+        ]
+      },
     ]
   }
 ];

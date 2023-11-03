@@ -5,8 +5,9 @@ export interface FoodType {
     sheduleStart: number;
     sheduleEnd: number;
 }
+
 export interface Food {
-    id: string;
+    _id: string;
     name: string;
     desc: string;
     price: number;
@@ -15,3 +16,11 @@ export interface Food {
     createdAt: Date;
     updatedAt: Date;
 }
+export interface FoodDetails {
+    food: Food;
+    recipe: any[];
+}
+
+
+
+

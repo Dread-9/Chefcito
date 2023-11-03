@@ -7,6 +7,7 @@ import * as serverEndpoint from '../../../utils/url'
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
 import { ToastService } from '../../../services/toast.service';
+import { LocalNotificationsService } from '../../../services/local-notifications.service';
 
 @Component({
   selector: 'app-login',
@@ -27,7 +28,8 @@ export class LoginPage implements OnInit {
     private user: UserService,
     private loadingController: LoadingController,
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private localNotificationsService: LocalNotificationsService
   ) {
     this.LoginFormulario;
   }
@@ -61,10 +63,10 @@ export class LoginPage implements OnInit {
         });
         if (response.ok) {
           const responseData = await response.json();
-          this.auth.login(responseData); // Marca al usuario como autenticado
-          this.auth.setToken(responseData.token); // Configura el token y su tiempo de expiración
+          this.auth.login(responseData);
+          this.auth.setToken(responseData.token);
           this.limpiarCampos();
-          const token = this.auth.getToken(); // Verifica si el token ha expirado
+          const token = this.auth.getToken();
           if (token) {
             this.user.setUser(responseData.user);
             this.toastService.showToast(
@@ -72,9 +74,13 @@ export class LoginPage implements OnInit {
               'success',
               3000
             );
+            this.localNotificationsService.scheduleNotification(
+              'Inicio de Sesion',
+              this.mensajesGlobal.SOLICITUD_SESION.MSJ_SESION_EXITOS.login,
+              new Date(new Date().getTime() + 3000)
+            );
             this.router.navigate(['/clientes', responseData.token, 'tab1']);
           } else {
-            // El token ha expirado, realiza la redirección a la página principal
             this.router.navigate(['/']);
             this.toastService.showToast(
               'La sesión ha expirado. Por favor, inicia sesión nuevamente.',

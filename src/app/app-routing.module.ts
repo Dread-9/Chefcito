@@ -22,18 +22,6 @@ const routes: Routes = [
     path: 'recoverpassword',
     loadChildren: () => import('./pages/sesion/recoverpassword/recoverpassword.module').then(m => m.RecoverpasswordPageModule)
   },
-  {
-    path: 'foodmodal',
-    loadChildren: () => import('./pages/foodmodal/foodmodal.module').then(m => m.FoodmodalPageModule)
-  },
-  {
-    path: 'pay',
-    loadChildren: () => import('./pages/pay/pay.module').then(m => m.PayPageModule)
-  },
-  {
-    path: 'qr',
-    loadChildren: () => import('./pages/qr/qr.module').then(m => m.QrPageModule)
-  }
 ];
 @NgModule({
   imports: [
