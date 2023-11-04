@@ -1,9 +1,11 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, NgZone, OnInit, ViewChild } from '@angular/core';
 import { GestureController, ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { ToastService } from '../../services/toast.service';
 import { Food } from '../../models/interfaceFood';
+import { AuthService } from '../../services/auth.service';
+import { LocalNotificationsService } from '../../services/local-notifications.service';
 
 @Component({
   selector: 'app-foodmodal',
@@ -14,7 +16,7 @@ export class FoodmodalPage implements OnInit {
   @ViewChild('swipeButton', { read: ElementRef }) swipeButton!: ElementRef;
   @Input() carrito!: Food[];
   @Input() onCartItemRemoved!: (producto: Food) => void;
-
+  token: any;
   color = 'primary';
   text = 'Ordenar';
   swipeInProgress = false;
@@ -27,10 +29,14 @@ export class FoodmodalPage implements OnInit {
     private modalController: ModalController,
     private router: Router,
     private alertController: AlertController,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private auth: AuthService,
+    private ngZone: NgZone,
+    private localNotificationsService: LocalNotificationsService
   ) { }
 
   ngOnInit() {
+    this.token = this.auth.getToken();
   }
   ngAfterViewInit() {
     this.createSwipeGesture();
@@ -80,7 +86,16 @@ export class FoodmodalPage implements OnInit {
       },
       onEnd: (detail) => {
         if (this.translateX >= this.colWidth) {
-          this.toastService.showToast('Se ha realizado el pedido', 'success', 3000);
+          this.ngZone.run(() => {
+            this.router.navigate(['/clientes', this.token, 'foodmodal', 'order']);
+          });
+          this.modalController.dismiss();
+          this.toastService.showToast('Se ha realizado la orden', 'success', 3000);
+          this.localNotificationsService.scheduleNotification(
+            'Reserva',
+            'Reserva realizada de manera exitosa',
+            new Date(new Date().getTime() + 3000)
+          );
         }
         this.swipeInProgress = false;
         this.swipeButton.nativeElement.style.transform = 'translateX(0)';

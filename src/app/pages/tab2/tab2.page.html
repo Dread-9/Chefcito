@@ -40,13 +40,12 @@
                 <ion-img [src]="food.img" alt="{{ food.name }}"></ion-img>
               </ion-thumbnail>
               <ion-label>
-                <!-- <h2>{{ food._id }}</h2> -->
                 <h2>{{ food.name }}</h2>
                 <p>{{ food.desc }}</p>
                 <p>Precio: {{ food.price }}</p>
                 <ion-button (click)="verDetalles(food._id)">Ver Detalles</ion-button>
               </ion-label>  
-              <ion-button shape="round" (click)="agregarAlCarrito(food._id)">
+              <ion-button shape="round" (click)="agregarAlCarrito(food)">
                 <ion-icon name="add-outline"></ion-icon>
               </ion-button>
             </ion-item>

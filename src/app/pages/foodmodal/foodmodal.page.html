@@ -34,7 +34,9 @@
       </ion-col>
     </ion-row>
   </ion-list>
-  <ion-text *ngIf="carrito.length === 0" class="ion-text-center">
-    El carrito está vacío.
-  </ion-text>
+  <ion-card color="secondary" *ngIf="carrito.length === 0">
+    <ion-card-header>
+      <ion-card-title>El carrito esta vacio</ion-card-title>
+    </ion-card-header>
+  </ion-card>
 </ion-content>

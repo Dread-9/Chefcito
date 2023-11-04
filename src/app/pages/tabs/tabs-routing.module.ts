@@ -43,16 +43,6 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'pay',
-        children: [
-          {
-            path: '',
-            loadChildren: () =>
-              import('../pay/pay.module').then(m => m.PayPageModule)
-          }
-        ]
-      },
-      {
         path: 'qr',
         children: [
           {

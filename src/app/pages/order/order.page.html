@@ -3,14 +3,19 @@
       <ion-buttons slot="start">
         <ion-back-button ></ion-back-button>
       </ion-buttons>
-    <ion-title >Detalle de orden</ion-title>
+    <ion-title >Estado de Orden</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">pay</ion-title>
+      <ion-title size="large">order</ion-title>
     </ion-toolbar>
   </ion-header>
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
+    <ion-fab-button (click)="pay()" >
+      <ion-icon name="bag-check-outline"></ion-icon>
+    </ion-fab-button> 
+  </ion-fab>
 </ion-content>
