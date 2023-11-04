@@ -6,6 +6,7 @@ import { ToastService } from '../../services/toast.service';
 import { Food } from '../../models/interfaceFood';
 import { AuthService } from '../../services/auth.service';
 import { LocalNotificationsService } from '../../services/local-notifications.service';
+import { ShoppingCartService } from 'src/app/services/shopping-cart.service';
 
 @Component({
   selector: 'app-foodmodal',
@@ -13,9 +14,10 @@ import { LocalNotificationsService } from '../../services/local-notifications.se
   styleUrls: ['./foodmodal.page.scss'],
 })
 export class FoodmodalPage implements OnInit {
+  @Input() botonCarritoModalDeshabilitado!: boolean;
+  @Input() reservaActiva!: boolean;
   @ViewChild('swipeButton', { read: ElementRef }) swipeButton!: ElementRef;
-  @Input() carrito!: Food[];
-  @Input() onCartItemRemoved!: (producto: Food) => void;
+  carrito: { product: Food; quantity: number }[] = [];
   token: any;
   color = 'primary';
   text = 'Ordenar';
@@ -32,8 +34,11 @@ export class FoodmodalPage implements OnInit {
     private toastService: ToastService,
     private auth: AuthService,
     private ngZone: NgZone,
-    private localNotificationsService: LocalNotificationsService
-  ) { }
+    private localNotificationsService: LocalNotificationsService,
+    private shoppingCartService: ShoppingCartService
+  ) {
+    this.carrito = this.shoppingCartService.obtenerCarrito();
+  }
 
   ngOnInit() {
     this.token = this.auth.getToken();
@@ -43,29 +48,9 @@ export class FoodmodalPage implements OnInit {
   }
 
   cerrarModal() {
-    this.modalController.dismiss();
-  }
-
-  eliminarDelCarrito(producto: Food) {
-    this.alertController
-      .create({
-        header: 'Confirmación',
-        message: `¿Estás seguro de eliminar "${producto.name}" del carrito?`,
-        buttons: [
-          {
-            text: 'Cancelar',
-            role: 'cancel',
-          },
-          {
-            text: 'Eliminar',
-            handler: () => {
-              this.onCartItemRemoved(producto);
-              this.toastService.showToast(`${producto.name} se eliminó del carrito`, 'success', 3000);
-            },
-          },
-        ],
-      })
-      .then((alert) => alert.present());
+    this.modalController.dismiss({
+      botonCarritoModalDeshabilitado: this.botonCarritoModalDeshabilitado
+    });
   }
   private createSwipeGesture() {
     this.swipeGesture = this.gestureCtrl.create({
@@ -106,5 +91,40 @@ export class FoodmodalPage implements OnInit {
 
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  eliminarDelCarrito(producto: Food) {
+    this.alertController
+      .create({
+        header: 'Confirmación',
+        message: `¿Estás seguro de eliminar "${producto.name}" del carrito?`,
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+          },
+          {
+            text: 'Eliminar',
+            handler: () => {
+              this.shoppingCartService.eliminarDelCarrito(producto);
+              if (this.carrito.length === 0) {
+                this.botonCarritoModalDeshabilitado = true;
+              } else {
+                this.botonCarritoModalDeshabilitado = false;
+              }
+            },
+          },
+        ],
+      })
+      .then((alert) => alert.present());
+  }
+  aumentarCantidad(item: { product: Food; quantity: number }) {
+    item.quantity++;
+  }
+
+  disminuirCantidad(item: { product: Food; quantity: number }) {
+    if (item.quantity > 1) {
+      item.quantity--;
+    }
   }
 }

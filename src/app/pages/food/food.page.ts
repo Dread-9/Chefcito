@@ -6,6 +6,7 @@ import { ModalController } from '@ionic/angular';
 import { FoodmodalPage } from '../foodmodal/foodmodal.page';
 import { AlertController } from '@ionic/angular';
 import { ToastService } from '../../services/toast.service';
+import { ShoppingCartService } from '../../services/shopping-cart.service';
 
 @Component({
   selector: 'app-food',
@@ -15,13 +16,14 @@ import { ToastService } from '../../services/toast.service';
 export class FoodPage implements OnInit {
   productDetails: FoodDetails;
   carrito: Food[] = [];
-
+  botonCarritoModalDeshabilitado: boolean = true;
   constructor(
     private route: ActivatedRoute,
     private foodService: FoodService,
     private modalController: ModalController,
     private alertController: AlertController,
     private toastService: ToastService,
+    private cartService: ShoppingCartService
   ) {
     this.productDetails = { food: {} as Food, recipe: [] };
   }
@@ -33,5 +35,30 @@ export class FoodPage implements OnInit {
         this.productDetails = data;
       });
     });
+  }
+  async agregarAlCarrito(producto: Food) {
+    const alert = await this.alertController.create({
+      header: 'Confirmación',
+      message: `¿Deseas agregar "${producto.name}" al carrito?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            this.toastService.showToast('El producto no a sido agregado a tu carrito', 'warning', 2000);
+          },
+        },
+        {
+          text: 'Agregar',
+          handler: () => {
+            this.cartService.agregarAlCarrito(producto);
+            this.toastService.showToast('Producto agregado al carrito', 'success', 2000);
+            this.botonCarritoModalDeshabilitado = false;
+          },
+        },
+      ],
+    });
+
+    await alert.present();
   }
 }

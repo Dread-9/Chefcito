@@ -16,9 +16,8 @@
             <ion-label *ngIf="user"> Nombre de Usuario: {{user.name}} {{user.lastName}}</ion-label>
             <ion-label>Mesa Activa: <ion-icon [name]="sharedDataService.getReservations()?.active ? 'ellipse' : 'checkmark-circle'" [color]="sharedDataService.getReservations()?.active ? 'success' : 'danger'"></ion-icon></ion-label>
             <ion-label>Fecha de reserva:{{fechaA}} </ion-label>
-            <!-- <ion-button (click)="cancelReservation()" color="danger">Cancelar Reserva</ion-button> -->
           </ion-list>
-          <ion-icon name="enter-outline" slot="end" (click)="cancelReservation()" color="danger" style="margin-left: auto;"></ion-icon>
+          <ion-icon name="trash-outline" slot="end" (click)="cancelReservation()" color="danger" style="margin-left: auto;"></ion-icon>
         </ion-item>
       </ion-list>
     </ion-card-content>
@@ -33,7 +32,7 @@
     <ion-card-content>
       <ng-container *ngFor="let foodType of foodTypes">
         <ng-container *ngIf="seleccionado === foodType._id">
-          <!-- <h2>{{ foodType.name }}</h2> -->
+          <h2>{{ foodType.name }}</h2>
           <ion-list>
             <ion-item *ngFor="let food of foodsByType[foodType._id]" >
               <ion-thumbnail slot="start">
@@ -41,10 +40,13 @@
               </ion-thumbnail>
               <ion-label>
                 <h2>{{ food.name }}</h2>
+                <p color="primary" >Precio: {{ food.price }}</p>
                 <p>{{ food.desc }}</p>
-                <p>Precio: {{ food.price }}</p>
-                <ion-button (click)="verDetalles(food._id)">Ver Detalles</ion-button>
-              </ion-label>  
+                <ion-button (click)="verDetalles(food._id)" expand="full">
+                  Ver detalles
+                  <!-- <ion-icon name="search-outline"></ion-icon> -->
+                </ion-button>
+              </ion-label>
               <ion-button shape="round" (click)="agregarAlCarrito(food)">
                 <ion-icon name="add-outline"></ion-icon>
               </ion-button>
@@ -54,11 +56,16 @@
       </ng-container>
     </ion-card-content>
   </ion-card>
+  <ion-card *ngIf="!ProductosDisponibles()">
+    <ion-card-header>
+      <ion-card-title>No hay productos disponibles</ion-card-title>
+    </ion-card-header>
+  </ion-card>
   <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
-    <ion-fab-button (click)="abrirModal()" [disabled]="modalButtonDisabled">
+    <ion-fab-button (click)="abrirModal()" [disabled]="botonCarritoModalDeshabilitado">
       <ion-icon name="cart-outline"></ion-icon>
-    </ion-fab-button> 
-  </ion-fab>
+    </ion-fab-button>
+  </ion-fab>  
   <ion-fab slot="fixed" vertical="bottom" horizontal="start" >
     <ion-fab-button color="medium" (click)="alert()">
      <ion-icon name="information-circle-outline"></ion-icon>

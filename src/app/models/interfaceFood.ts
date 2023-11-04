@@ -15,6 +15,7 @@ export interface Food {
     type: string;
     createdAt: Date;
     updatedAt: Date;
+    cantidad: number;
 }
 export interface FoodDetails {
     food: Food;

@@ -11,6 +11,8 @@ import { UserService } from '../../services/user.service';
 import { SharedService } from '../../services/shared.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { NavController } from '@ionic/angular';
+import { ShoppingCartService } from '../../services/shopping-cart.service';
+
 
 @Component({
   selector: 'app-tab2',
@@ -18,15 +20,14 @@ import { NavController } from '@ionic/angular';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page {
+  botonCarritoModalDeshabilitado: boolean = true;
+  carrito: { product: Food; quantity: number }[] = [];
   detalleDelProducto: Food | null = null;
-
   token: any;
-
   seleccionado!: string;
   foodTypes!: FoodType[];
   Food!: Food[];
   foodsByType: { [key: string]: any[] } = {};
-  carrito: Food[] = [];
   modalButtonDisabled: boolean = true;
   fechaA!: string;
   reservations!: Reservation;
@@ -45,7 +46,8 @@ export class Tab2Page {
     private userService: UserService,
     sharedDataService: SharedService,
     private auth: AuthService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private cartService: ShoppingCartService
   ) {
     this.sharedDataService = sharedDataService;
   }
@@ -59,6 +61,7 @@ export class Tab2Page {
     });
     this.user = this.userService.getUser();
     this.token = this.auth.getToken();
+    this.carrito = this.cartService.obtenerCarrito();
   }
   async cancelReservation() {
     const alert = await this.alertController.create({
@@ -121,59 +124,6 @@ export class Tab2Page {
     const selectedType = event.detail.value as string;
     this.seleccionado = selectedType;
   }
-
-  async agregarAlCarrito(food: Food) {
-    const alert = await this.alertController.create({
-      header: 'Confirmación',
-      message: `¿Estás seguro de agregar "${food.name}" a tu carrito?`,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-            this.toastService.showToast('El producto no a sido añadido', 'warning', 3000);
-          },
-        },
-        {
-          text: 'Agregar al carrito',
-          handler: () => {
-            this.carrito.push(food);
-            this.updateModalButtonState();
-            this.toastService.showToast(`${food.name} se agregó al carrito`, 'success', 3000);
-          },
-        },
-      ],
-    });
-    await alert.present();
-  }
-
-  updateModalButtonState() {
-    this.modalButtonDisabled = this.carrito.length === 0;
-    console.log('modalButtonDisabled:', this.modalButtonDisabled);
-  }
-
-  onCartItemRemoved(producto: Food) {
-    const index = this.carrito.indexOf(producto);
-    if (index >= 0) {
-      this.carrito.splice(index, 1);
-      this.toastService.showToast(`${producto.name} se eliminó del carrito`, 'success', 3000);
-      this.updateModalButtonState();
-    }
-  }
-  async abrirModal() {
-    if (!this.modalButtonDisabled) {
-      const modal = await this.modalController.create({
-        component: FoodmodalPage,
-        componentProps: {
-          carrito: this.carrito,
-          onCartItemRemoved: (producto: Food) => this.onCartItemRemoved(producto),
-        },
-      });
-      await modal.present();
-    }
-  }
-
   async alert() {
     const alert = await this.alertController.create({
       header: 'Mensaje informativo',
@@ -185,4 +135,55 @@ export class Tab2Page {
   verDetalles(foodId: string) {
     this.router.navigate(['/clientes', this.token, 'tab2', 'food', foodId]);
   }
+  async abrirModal() {
+    const modal = await this.modalController.create({
+      component: FoodmodalPage,
+      componentProps: {
+        carrito: this.carrito,
+        reservaActiva: this.sharedDataService.getReservations()?.active,
+        botonCarritoModalDeshabilitado: this.botonCarritoModalDeshabilitado
+      },
+    });
+    return await modal.present();
+  }
+  async agregarAlCarrito(producto: Food) {
+    const alert = await this.alertController.create({
+      header: 'Confirmación',
+      message: `¿Deseas agregar "${producto.name}" al carrito?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            this.toastService.showToast('El producto no ha sido agregado al carrito', 'warning', 2000);
+
+          },
+        },
+        {
+          text: 'Agregar',
+          handler: () => {
+            this.cartService.agregarAlCarrito(producto);
+            this.toastService.showToast('Producto agregado al carrito', 'success', 2000);
+            this.botonCarritoModalDeshabilitado = false;
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+  ProductosDisponibles(): boolean {
+    if (!this.seleccionado) {
+      return false;
+    }
+
+    const tipoSeleccionado = this.foodTypes.find(tipo => tipo._id === this.seleccionado);
+    if (tipoSeleccionado) {
+      const productos = this.foodsByType[tipoSeleccionado._id];
+      return productos && productos.length > 0;
+    }
+
+    return false;
+  }
+
 } 
