@@ -71,16 +71,33 @@ export class FoodmodalPage implements OnInit {
       },
       onEnd: (detail) => {
         if (this.translateX >= this.colWidth) {
-          this.ngZone.run(() => {
-            this.router.navigate(['/clientes', this.token, 'foodmodal', 'order']);
-          });
-          this.modalController.dismiss();
-          this.toastService.showToast('Se ha realizado la orden', 'success', 3000);
-          this.localNotificationsService.scheduleNotification(
-            'Reserva',
-            'Reserva realizada de manera exitosa',
-            new Date(new Date().getTime() + 3000)
-          );
+          this.alertController
+            .create({
+              header: 'Confirmación',
+              message: 'Estas seguro de realizar esta reserva',
+              buttons: [
+                {
+                  text: 'Cancelar',
+                  role: 'cancel',
+                },
+                {
+                  text: 'Reservar',
+                  handler: () => {
+                    this.ngZone.run(() => {
+                      this.router.navigate(['/clientes', this.token, 'foodmodal', 'order']);
+                    });
+                    this.modalController.dismiss();
+                    this.toastService.showToast('Se ha realizado la orden', 'success', 3000);
+                    this.localNotificationsService.scheduleNotification(
+                      'Reserva',
+                      'Reserva realizada de manera exitosa',
+                      new Date(new Date().getTime() + 3000)
+                    );
+                  },
+                },
+              ],
+            })
+            .then((alert) => alert.present());
         }
         this.swipeInProgress = false;
         this.swipeButton.nativeElement.style.transform = 'translateX(0)';
@@ -126,5 +143,13 @@ export class FoodmodalPage implements OnInit {
     if (item.quantity > 1) {
       item.quantity--;
     }
+  }
+  async alert() {
+    const alert = await this.alertController.create({
+      header: 'Mensaje informativo',
+      message: 'Solo puedes realizar un pedido si tienes una reserva de mesa habilitada.',
+      buttons: ['Entendido'],
+    });
+    await alert.present();
   }
 }

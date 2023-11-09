@@ -10,17 +10,21 @@ export const url = {
         foods: {
             food: `${BASE_URL}/food`,
             typefood: `${BASE_URL}/type/food`,
+            measurement: `${BASE_URL}/type/measurement`,
         }
     },
     urlReservation: {
         reservations: {
             reservation: `${BASE_URL}/reservation`,
+            table: `${BASE_URL}/table`,
+            cancelar: `${BASE_URL}/sale/pay`,
         }
     },
     urlOrder: {
         orders: {
-            order: `${BASE_URL}/order`,
-            typeorder: `${BASE_URL}/type/order`,
+            order: `${BASE_URL}/order`,//pendiente
+            typeorder: `${BASE_URL}/type/order`,//pendiente
+            pay: `${BASE_URL}/sale/pay`,//pendiente
         }
     },
 };

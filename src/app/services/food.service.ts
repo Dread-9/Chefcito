@@ -23,4 +23,7 @@ export class FoodService {
     const url = `${serverEndpoint.url.urlFood.foods.food}?id=${foodId}`;
     return this.http.get<FoodDetails>(url);
   }
+  getMeasurement(): Observable<any> {
+    return this.http.get(serverEndpoint.url.urlFood.foods.measurement);
+  }
 }

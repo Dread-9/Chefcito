@@ -10,7 +10,6 @@ import { Reservation, Sale } from '../../models/interfaceReservation';
 import { UserService } from '../../services/user.service';
 import { SharedService } from '../../services/shared.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { NavController } from '@ionic/angular';
 import { ShoppingCartService } from '../../services/shopping-cart.service';
 
 
@@ -36,6 +35,10 @@ export class Tab2Page {
   reservation: any;
   sharedDataService: SharedService;
   user: any;
+  tables!: any[];
+  searchTerm: string = '';
+  reservationId!: any;
+
   constructor(
     private toastService: ToastService,
     private modalController: ModalController,
@@ -46,10 +49,12 @@ export class Tab2Page {
     private userService: UserService,
     sharedDataService: SharedService,
     private auth: AuthService,
-    private navCtrl: NavController,
     private cartService: ShoppingCartService
   ) {
     this.sharedDataService = sharedDataService;
+    this.sharedDataService.getTabla().subscribe((data: any[]) => {
+      this.tables = data;
+    });
   }
   ngOnInit() {
     this.typeFood();
@@ -59,10 +64,29 @@ export class Tab2Page {
       this.reservation = JSON.parse(params['reservation']);
       this.sale = JSON.parse(params['sale']);
     });
+    this.reservationId = this.route.snapshot.queryParams['saleId'];
     this.user = this.userService.getUser();
     this.token = this.auth.getToken();
     this.carrito = this.cartService.obtenerCarrito();
+    console.log('ID de reserva:', this.reservationId);
   }
+  filterFoodsByName(foods: Food[], searchTerm: string): Food[] {
+    if (!searchTerm) {
+      return foods;
+    }
+    searchTerm = searchTerm.toLowerCase();
+    return foods.filter(food => food.name.toLowerCase().includes(searchTerm));
+  }
+
+  getTableNumber(tableId: string): string {
+    const table = this.tables.find(table => table._id === tableId);
+    return table ? table.num.toString() : 'No encontrado';
+  }
+  getTableSize(tableId: string): string {
+    const table = this.tables.find(table => table._id === tableId);
+    return table ? table.size.toString() : 'No encontrado';
+  }
+
   async cancelReservation() {
     const alert = await this.alertController.create({
       header: '¿Estás seguro de cancelar tu reserva?',
@@ -72,18 +96,26 @@ export class Tab2Page {
           text: 'Cancelar',
           role: 'cancel',
           handler: () => {
-            // El usuario eligió cancelar la acción
+            this.toastService.showToast('Su reserva no a sido cancelada', 'warning', 2000);
           }
         },
         {
-          text: 'Sí, cancelar',
+          text: 'Sí',
           handler: () => {
-            this.toastService.showToast('Se ha cancelado la Reseva de la mesa: ', 'success', 3000);
+            this.sharedDataService.DeleteReservation(this.reservationId, this.token).subscribe({
+              next: (response) => {
+                this.router.navigate(['clientes']);
+                this.toastService.showToast(`Se ha cancelado la Reseva de la mesa: ${this.reservations.table}`, 'success', 3000);
+              },
+              error: (error) => {
+                const errorData = error.error;
+                this.toastService.showToast(errorData.msg, 'danger', 3000);
+              }
+            });
           }
         }
       ]
     });
-
     await alert.present();
   }
   fecha() {
@@ -123,14 +155,6 @@ export class Tab2Page {
   cambiarSegmento(event: any) {
     const selectedType = event.detail.value as string;
     this.seleccionado = selectedType;
-  }
-  async alert() {
-    const alert = await this.alertController.create({
-      header: 'Mensaje informativo',
-      message: 'Solo puedes realizar un pedido si tienes una reserva de mesa habilitada.',
-      buttons: ['Entendido'],
-    });
-    await alert.present();
   }
   verDetalles(foodId: string) {
     this.router.navigate(['/clientes', this.token, 'tab2', 'food', foodId]);

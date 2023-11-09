@@ -20,8 +20,10 @@ export class LoginPage implements OnInit {
   url = serverEndpoint;
   responseData: any;
   LoginFormulario = {
-    email: '',
-    password: ''
+    email: 'x56dragon@gmail.com',
+    password: '12345678'
+    // email: '',
+    // password: ''
   };
   constructor(
     private auth: AuthService,

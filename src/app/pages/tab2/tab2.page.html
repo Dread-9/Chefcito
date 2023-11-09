@@ -8,14 +8,16 @@
     <ion-card-content>
       <ion-list class="border" lines="none">
         <ion-item>
-          <ion-thumbnail slot="start" style="font-size: 60px;"> <!-- Ajusta el tamaño del ion-thumbnail aquí -->
+          <!-- <ion-thumbnail slot="start" style="font-size: 60px;">
             <ion-icon name="calendar-outline"></ion-icon>
-          </ion-thumbnail>
+          </ion-thumbnail> -->
           <ion-list lines="none" >
-            <ion-label>Id de mesa: {{ sharedDataService.getReservations()?.table }}</ion-label>
-            <ion-label *ngIf="user"> Nombre de Usuario: {{user.name}} {{user.lastName}}</ion-label>
-            <ion-label>Mesa Activa: <ion-icon [name]="sharedDataService.getReservations()?.active ? 'ellipse' : 'checkmark-circle'" [color]="sharedDataService.getReservations()?.active ? 'success' : 'danger'"></ion-icon></ion-label>
-            <ion-label>Fecha de reserva:{{fechaA}} </ion-label>
+            <ion-label color="primary">Id: {{ sharedDataService.getReservations()?._id }}</ion-label>
+            <ion-label color="primary">Mesa: {{ getTableNumber(sharedDataService.getReservations()?.table || '') }} </ion-label>
+            <ion-label color="primary">Capacidad: {{ getTableSize(sharedDataService.getReservations()?.table || '') }} personas</ion-label>
+            <ion-label *ngIf="user" color="primary"> Usuario: {{user.name}} {{user.lastName}}</ion-label>
+            <ion-label color="primary">Mesa Activa: <ion-icon [name]="sharedDataService.getReservations()?.active ? 'ellipse' : 'checkmark-circle'" [color]="sharedDataService.getReservations()?.active ? 'success' : 'danger'"></ion-icon></ion-label>
+            <ion-label color="primary">Fecha de reserva:{{fechaA}} </ion-label>
           </ion-list>
           <ion-icon name="trash-outline" slot="end" (click)="cancelReservation()" color="danger" style="margin-left: auto;"></ion-icon>
         </ion-item>
@@ -28,13 +30,19 @@
       <ion-label>{{ tipo.name }}</ion-label>
     </ion-segment-button>
   </ion-segment>
+  <ion-searchbar [(ngModel)]="searchTerm" placeholder="Buscar" color="primary"></ion-searchbar>
   <ion-card *ngIf="seleccionado">
     <ion-card-content>
       <ng-container *ngFor="let foodType of foodTypes">
         <ng-container *ngIf="seleccionado === foodType._id">
           <h2>{{ foodType.name }}</h2>
+          <ion-card *ngIf="!ProductosDisponibles()" color="secondary">
+            <ion-card-header>
+              <ion-card-title>No hay productos disponibles</ion-card-title>
+            </ion-card-header>
+          </ion-card>
           <ion-list>
-            <ion-item *ngFor="let food of foodsByType[foodType._id]" >
+            <ion-item *ngFor="let food of filterFoodsByName(foodsByType[foodType._id], searchTerm)">
               <ion-thumbnail slot="start">
                 <ion-img [src]="food.img" alt="{{ food.name }}"></ion-img>
               </ion-thumbnail>
@@ -56,19 +64,19 @@
       </ng-container>
     </ion-card-content>
   </ion-card>
-  <ion-card *ngIf="!ProductosDisponibles()">
-    <ion-card-header>
-      <ion-card-title>No hay productos disponibles</ion-card-title>
-    </ion-card-header>
-  </ion-card>
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
+  <!-- <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
     <ion-fab-button (click)="abrirModal()" [disabled]="botonCarritoModalDeshabilitado">
       <ion-icon name="cart-outline"></ion-icon>
     </ion-fab-button>
+  </ion-fab>   -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
+    <ion-fab-button (click)="abrirModal()">
+      <ion-icon name="cart-outline"></ion-icon>
+    </ion-fab-button>
   </ion-fab>  
-  <ion-fab slot="fixed" vertical="bottom" horizontal="start" >
+  <!-- <ion-fab slot="fixed" vertical="bottom" horizontal="start" >
     <ion-fab-button color="medium" (click)="alert()">
      <ion-icon name="information-circle-outline"></ion-icon>
     </ion-fab-button> 
-  </ion-fab>
+  </ion-fab> -->
 </ion-content>

@@ -71,12 +71,14 @@ export class QrPage implements OnInit {
           map((response: any) => {
             const reservationData: Reservation = response.reservation;
             const saleData: Sale = response.sale;
+            const saleId = saleData._id;
             this.sharedDataService.setReservations(reservationData);
             this.sharedDataService.setSales(saleData);
             this.router.navigate(['clientes', token, 'tab2'], {
               queryParams: {
                 reservationData: JSON.stringify(reservationData),
                 saleData: JSON.stringify(saleData),
+                saleId: saleId,
               }
             });
             this.localNotificationsService.scheduleNotification(

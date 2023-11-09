@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Food, FoodDetails } from 'src/app/models/interfaceFood';
+import { Food, FoodDetails, Unit } from 'src/app/models/interfaceFood';
 import { FoodService } from 'src/app/services/food.service';
-import { ModalController } from '@ionic/angular';
-import { FoodmodalPage } from '../foodmodal/foodmodal.page';
 import { AlertController } from '@ionic/angular';
 import { ToastService } from '../../services/toast.service';
 import { ShoppingCartService } from '../../services/shopping-cart.service';
@@ -17,13 +15,13 @@ export class FoodPage implements OnInit {
   productDetails: FoodDetails;
   carrito: Food[] = [];
   botonCarritoModalDeshabilitado: boolean = true;
+  units: Unit[] = [];
   constructor(
     private route: ActivatedRoute,
     private foodService: FoodService,
-    private modalController: ModalController,
     private alertController: AlertController,
     private toastService: ToastService,
-    private cartService: ShoppingCartService
+    private cartService: ShoppingCartService,
   ) {
     this.productDetails = { food: {} as Food, recipe: [] };
   }
@@ -34,6 +32,9 @@ export class FoodPage implements OnInit {
       this.foodService.getFoodDetailsById(foodId).subscribe((data: FoodDetails) => {
         this.productDetails = data;
       });
+    });
+    this.foodService.getMeasurement().subscribe((data: any) => {
+      this.units = data;
     });
   }
   async agregarAlCarrito(producto: Food) {
@@ -60,5 +61,9 @@ export class FoodPage implements OnInit {
     });
 
     await alert.present();
+  }
+  getUnitName(unitId: string): string {
+    const unit = this.units.find(u => u._id === unitId);
+    return unit ? unit.name : ''
   }
 }

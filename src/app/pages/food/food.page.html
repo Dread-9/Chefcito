@@ -14,9 +14,8 @@
       <ion-card-title>{{ productDetails.food.name }}</ion-card-title>
       <ion-card-subtitle>{{ productDetails.food.desc }}</ion-card-subtitle>
     </ion-card-header>
-  
     <ion-card-content>
-      Precio: {{ productDetails.food.price }}
+      Precio: ${{ productDetails.food.price }} pesos
     </ion-card-content>
   </ion-card>
   <ion-card>
@@ -25,9 +24,19 @@
     </ion-card-header>
     <ion-card-content>
       <ion-list *ngIf="productDetails.recipe && productDetails.recipe.length > 0; else noRecipe">
-        <ion-item *ngFor="let ingredient of productDetails.recipe">
+        <ion-grid>
+          <ion-row>
+            <ion-col>Nombre</ion-col>
+            <ion-col>Cantidad</ion-col>
+            <ion-col>Medida</ion-col>
+            <ion-col>Proceso</ion-col>
+          </ion-row>
+        </ion-grid>
+        <ion-item *ngFor="let ingredient of productDetails.recipe" >
           <ion-label>{{ ingredient.ingredient.name }}</ion-label>
-          <ion-label>{{ ingredient.amount }}</ion-label>
+          <ion-label>{{ ingredient.amount }} </ion-label>
+          <ion-label>{{ getUnitName(ingredient.ingredient.unit) }}</ion-label>
+          <ion-label>{{ ingredient.process.name }} </ion-label>
         </ion-item>
       </ion-list>
     </ion-card-content>

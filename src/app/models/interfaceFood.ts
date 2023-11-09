@@ -19,7 +19,29 @@ export interface Food {
 }
 export interface FoodDetails {
     food: Food;
-    recipe: any[];
+    recipe: {
+        _id: string;
+        food: string;
+        ingredient: {
+            _id: string;
+            name: string;
+            desc: string;
+            stock: number;
+            stockFlag: number;
+            unit: string;
+            createdAt: string;
+            updatedAt: string;
+        };
+        process: {
+            _id: string;
+            name: string;
+        };
+        amount: number;
+    }[];
+}
+export interface Unit {
+    _id: string;
+    name: string;
 }
 
 
