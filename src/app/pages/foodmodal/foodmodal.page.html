@@ -37,7 +37,7 @@
         <div align="center">
           <ion-text color="light">Ordenar</ion-text>
         </div>
-        <ion-fab-button #swipeButton color="light" [disabled]="!reservaActiva">
+        <ion-fab-button #swipeButton color="light">
           <ion-icon class="left" name="chevron-forward-outline"></ion-icon>
           <ion-icon name="chevron-forward-outline"></ion-icon>
           <ion-icon class="right" name="chevron-forward-outline"></ion-icon>
@@ -50,9 +50,4 @@
       <ion-card-title>El carrito está vacío</ion-card-title>
     </ion-card-header>
   </ion-card>
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
-    <ion-fab-button color="medium" (click)="alert()">
-     <ion-icon name="information-circle-outline"></ion-icon>
-    </ion-fab-button> 
-  </ion-fab>
 </ion-content>

@@ -11,6 +11,7 @@ export const url = {
             food: `${BASE_URL}/food`,
             typefood: `${BASE_URL}/type/food`,
             measurement: `${BASE_URL}/type/measurement`,
+            ingredientes: `${BASE_URL}/ingredient/stock`,//pendiente
         }
     },
     urlReservation: {

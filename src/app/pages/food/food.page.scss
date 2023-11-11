@@ -1,0 +1,12 @@
+ion-img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+
+@media only screen and (max-width: 600px) {
+    ion-img {
+        max-width: 100%;
+        height: auto;
+    }
+}

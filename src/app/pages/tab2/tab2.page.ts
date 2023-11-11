@@ -11,6 +11,7 @@ import { UserService } from '../../services/user.service';
 import { SharedService } from '../../services/shared.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ShoppingCartService } from '../../services/shopping-cart.service';
+import { LocalNotificationsService } from '../../services/local-notifications.service';
 
 
 @Component({
@@ -38,6 +39,9 @@ export class Tab2Page {
   tables!: any[];
   searchTerm: string = '';
   reservationId!: any;
+  mostrarCarta: boolean = true;
+  saleId: string | null = null;
+
 
   constructor(
     private toastService: ToastService,
@@ -49,7 +53,8 @@ export class Tab2Page {
     private userService: UserService,
     sharedDataService: SharedService,
     private auth: AuthService,
-    private cartService: ShoppingCartService
+    private cartService: ShoppingCartService,
+    private localNotificationsService: LocalNotificationsService
   ) {
     this.sharedDataService = sharedDataService;
     this.sharedDataService.getTabla().subscribe((data: any[]) => {
@@ -61,14 +66,18 @@ export class Tab2Page {
     this.food();
     this.fecha();
     this.route.queryParams.subscribe((params) => {
-      this.reservation = JSON.parse(params['reservation']);
-      this.sale = JSON.parse(params['sale']);
+      // this.reservation = JSON.parse(params['reservation']);
+      // this.sale = JSON.parse(params['sale']);
+      this.reservationId = this.route.snapshot.queryParams['saleId'];
     });
-    this.reservationId = this.route.snapshot.queryParams['saleId'];
+    this.sharedDataService.mostrarCarta$.subscribe((mostrarCarta) => {
+      this.mostrarCarta = mostrarCarta;
+    });
     this.user = this.userService.getUser();
     this.token = this.auth.getToken();
     this.carrito = this.cartService.obtenerCarrito();
-    console.log('ID de reserva:', this.reservationId);
+    // console.log('ID de reserva:', this.reservationId);
+    this.saleId = localStorage.getItem('saleId');
   }
   filterFoodsByName(foods: Food[], searchTerm: string): Food[] {
     if (!searchTerm) {
@@ -102,10 +111,22 @@ export class Tab2Page {
         {
           text: 'Sí',
           handler: () => {
-            this.sharedDataService.DeleteReservation(this.reservationId, this.token).subscribe({
+            const saleId = localStorage.getItem('saleId');
+            if (!saleId) {
+              this.toastService.showToast('No se encontró saleId en el localStorage', 'danger', 3000);
+              return;
+            }
+            this.sharedDataService.DeleteReservation(saleId, this.token).subscribe({
               next: (response) => {
-                this.router.navigate(['clientes']);
-                this.toastService.showToast(`Se ha cancelado la Reseva de la mesa: ${this.reservations.table}`, 'success', 3000);
+                this.sharedDataService.setMostrarCarta(false);
+                localStorage.removeItem('saleId');
+                this.router.navigate(['clientes', this.token, 'tab1']);
+                this.toastService.showToast(`Se ha cancelado la Reseva de la mesa: ${this.getTableNumber(this.sharedDataService.getReservations()?.table || '')}`, 'success', 3000);
+                this.localNotificationsService.scheduleNotification(
+                  'Reserva',
+                  `Se ha cancelado la Reseva de la mesa: ${this.getTableNumber(this.sharedDataService.getReservations()?.table || '')}`,
+                  new Date(new Date().getTime() + 3000)
+                );
               },
               error: (error) => {
                 const errorData = error.error;
@@ -165,7 +186,7 @@ export class Tab2Page {
       componentProps: {
         carrito: this.carrito,
         reservaActiva: this.sharedDataService.getReservations()?.active,
-        botonCarritoModalDeshabilitado: this.botonCarritoModalDeshabilitado
+        // botonCarritoModalDeshabilitado: this.botonCarritoModalDeshabilitado
       },
     });
     return await modal.present();
@@ -188,7 +209,7 @@ export class Tab2Page {
           handler: () => {
             this.cartService.agregarAlCarrito(producto);
             this.toastService.showToast('Producto agregado al carrito', 'success', 2000);
-            this.botonCarritoModalDeshabilitado = false;
+            // this.botonCarritoModalDeshabilitado = false;
           },
         },
       ],
@@ -208,6 +229,14 @@ export class Tab2Page {
     }
 
     return false;
+  }
+  async alert() {
+    const alert = await this.alertController.create({
+      header: 'Mensaje informativo',
+      message: 'Solo puedes activar el carrito si tienes una reserva de mesa activa',
+      buttons: ['Entendido'],
+    });
+    await alert.present();
   }
 
 } 

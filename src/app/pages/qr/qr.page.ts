@@ -65,22 +65,24 @@ export class QrPage implements OnInit {
       const parsedInput = JSON.parse(inputJSON);
       const tableValue = parsedInput.table;
       const requestBody = { table: tableValue, user: this.user._id };
-      console.log('Request', requestBody);
       this.reservation.postReservations(token, requestBody)
         .pipe(
           map((response: any) => {
             const reservationData: Reservation = response.reservation;
             const saleData: Sale = response.sale;
             const saleId = saleData._id;
+            console.log('Request', saleId);
+            localStorage.setItem('saleId', saleId);
             this.sharedDataService.setReservations(reservationData);
             this.sharedDataService.setSales(saleData);
             this.router.navigate(['clientes', token, 'tab2'], {
               queryParams: {
-                reservationData: JSON.stringify(reservationData),
-                saleData: JSON.stringify(saleData),
+                // reservationData: JSON.stringify(reservationData),
+                // saleData: JSON.stringify(saleData),
                 saleId: saleId,
               }
             });
+            this.sharedDataService.setMostrarCarta(true);
             this.localNotificationsService.scheduleNotification(
               'Reserva',
               'Reserva realizada de manera exitosa',
@@ -169,7 +171,7 @@ export class QrPage implements OnInit {
         this.scanActive = false;
         this.scanResult = code.data;
         this.scanResultAvailable = true;
-        console.log('Respuesta', this.scanResult)
+        // console.log('Respuesta', this.scanResult)
       } else {
         if (this.scanActive) {
           requestAnimationFrame(this.scan.bind(this));

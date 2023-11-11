@@ -1,18 +1,10 @@
-<!-- <ion-header [translucent]="true">
-  <ion-toolbar>
-      <ion-title> Detalles de la reserva</ion-title>
-  </ion-toolbar>
-</ion-header> -->
 <ion-content [fullscreen]="true">
-  <ion-card class="ion-activatable" *ngIf="sharedDataService.getReservations()">
+  <ion-card class="ion-activatable" *ngIf="mostrarCarta && sharedDataService.getReservations()">
     <ion-card-content>
       <ion-list class="border" lines="none">
         <ion-item>
-          <!-- <ion-thumbnail slot="start" style="font-size: 60px;">
-            <ion-icon name="calendar-outline"></ion-icon>
-          </ion-thumbnail> -->
           <ion-list lines="none" >
-            <ion-label color="primary">Id: {{ sharedDataService.getReservations()?._id }}</ion-label>
+            <!-- <ion-label color="primary">Id: {{ saleId }}</ion-label> -->
             <ion-label color="primary">Mesa: {{ getTableNumber(sharedDataService.getReservations()?.table || '') }} </ion-label>
             <ion-label color="primary">Capacidad: {{ getTableSize(sharedDataService.getReservations()?.table || '') }} personas</ion-label>
             <ion-label *ngIf="user" color="primary"> Usuario: {{user.name}} {{user.lastName}}</ion-label>
@@ -52,7 +44,6 @@
                 <p>{{ food.desc }}</p>
                 <ion-button (click)="verDetalles(food._id)" expand="full">
                   Ver detalles
-                  <!-- <ion-icon name="search-outline"></ion-icon> -->
                 </ion-button>
               </ion-label>
               <ion-button shape="round" (click)="agregarAlCarrito(food)">
@@ -64,19 +55,9 @@
       </ng-container>
     </ion-card-content>
   </ion-card>
-  <!-- <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
-    <ion-fab-button (click)="abrirModal()" [disabled]="botonCarritoModalDeshabilitado">
-      <ion-icon name="cart-outline"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>   -->
   <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
-    <ion-fab-button (click)="abrirModal()">
+    <ion-fab-button  (click)="abrirModal()" >
       <ion-icon name="cart-outline"></ion-icon>
     </ion-fab-button>
-  </ion-fab>  
-  <!-- <ion-fab slot="fixed" vertical="bottom" horizontal="start" >
-    <ion-fab-button color="medium" (click)="alert()">
-     <ion-icon name="information-circle-outline"></ion-icon>
-    </ion-fab-button> 
-  </ion-fab> -->
+  </ion-fab>
 </ion-content>

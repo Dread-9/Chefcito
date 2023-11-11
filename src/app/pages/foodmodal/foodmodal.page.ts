@@ -7,6 +7,7 @@ import { Food } from '../../models/interfaceFood';
 import { AuthService } from '../../services/auth.service';
 import { LocalNotificationsService } from '../../services/local-notifications.service';
 import { ShoppingCartService } from 'src/app/services/shopping-cart.service';
+import { OrderService } from '../../services/order.service';
 
 @Component({
   selector: 'app-foodmodal',
@@ -32,6 +33,7 @@ export class FoodmodalPage implements OnInit {
     private router: Router,
     private alertController: AlertController,
     private toastService: ToastService,
+    private orderService: OrderService,
     private auth: AuthService,
     private ngZone: NgZone,
     private localNotificationsService: LocalNotificationsService,
@@ -83,6 +85,7 @@ export class FoodmodalPage implements OnInit {
                 {
                   text: 'Reservar',
                   handler: () => {
+                    // this.orderService.postOrder(this.token, '')
                     this.ngZone.run(() => {
                       this.router.navigate(['/clientes', this.token, 'foodmodal', 'order']);
                     });

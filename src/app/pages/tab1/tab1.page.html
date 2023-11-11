@@ -22,18 +22,19 @@
           <ion-list lines="none">Escanea <ion-text class="color" [routerLink]="['/clientes/'+ token +'/qr']"> Aqui</ion-text> El codigo qr a la entrada del
             restaurant 
           </ion-list>
-          <ion-icon color="primary" name="qr-code-outline" slot="end" [routerLink]="['/clientes/'+ token +'/qr']"></ion-icon>
+          <ion-icon color="primary" name="qr-code-outline" slot="end" ></ion-icon>
         </ion-item>
       </ion-list>
     </ion-card-content>
     <ion-ripple-effect></ion-ripple-effect>
   </ion-card>
-  <ion-card class="ion-activatable">
+  <ion-card>
     <ion-card-content>
       <ion-list class="border" lines="none">
         <ion-item >
-          <ion-label [routerLink]="'/clientes/' + token + '/tab2'">Revisa nuestro Menú</ion-label>
-          <ion-icon color="primary" name="receipt-outline" [routerLink]="'/clientes/' + token + '/tab2'"></ion-icon>          
+          <ion-list lines="none">Revisa <ion-text class="color" [routerLink]="['/clientes/'+ token +'/tab2']"> Aqui</ion-text> Nuestro Menu
+          </ion-list>
+          <ion-icon color="primary" name="receipt-outline" slot="end" ></ion-icon>          
         </ion-item>
       </ion-list>
     </ion-card-content>

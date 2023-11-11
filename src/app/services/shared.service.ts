@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Reservation, Sale } from '../models/interfaceReservation';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import * as serverEndpoint from '../utils/url'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
@@ -11,7 +11,14 @@ export class SharedService {
   private reservations: Reservation | null = null;
   private sales: Sale | null = null;
   private reservationId: string | null = null;
+  private mostrarCartaSubject = new BehaviorSubject<boolean>(true);
+  mostrarCarta$: Observable<boolean> = this.mostrarCartaSubject.asObservable();
+
   constructor(private http: HttpClient) { }
+
+  setMostrarCarta(value: boolean) {
+    this.mostrarCartaSubject.next(value);
+  }
 
   setReservations(reservation: Reservation) {
     this.reservations = reservation;
