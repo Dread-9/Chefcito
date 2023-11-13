@@ -41,6 +41,13 @@ export class FoodPage implements OnInit {
     const alert = await this.alertController.create({
       header: 'Confirmación',
       message: `¿Deseas agregar "${producto.name}" al carrito?`,
+      inputs: [
+        {
+          name: 'comentario',
+          type: 'text',
+          placeholder: 'Añadir comentario (opcional)',
+        }
+      ],
       buttons: [
         {
           text: 'Cancelar',
@@ -51,10 +58,10 @@ export class FoodPage implements OnInit {
         },
         {
           text: 'Agregar',
-          handler: () => {
-            this.cartService.agregarAlCarrito(producto);
+          handler: (data) => {
+            const comentario = data.comentario || '';
+            this.cartService.agregarAlCarrito(producto, comentario);
             this.toastService.showToast('Producto agregado al carrito', 'success', 2000);
-            this.botonCarritoModalDeshabilitado = false;
           },
         },
       ],

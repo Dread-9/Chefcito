@@ -3,20 +3,48 @@
       <ion-buttons slot="start">
         <ion-back-button ></ion-back-button>
       </ion-buttons>
-    <ion-title >Tu orden</ion-title>
+    <ion-title class="ion-text-center">Tu orden</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">order</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
+  <ion-card *ngFor="let order of orders">
+    <ion-card-header>
+      <ion-card-title>Order ID: {{ order._id }}</ion-card-title>
+      <ion-card-subtitle>Sale: {{ order.sale }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-thumbnail slot="start">
+            <ion-img src="https://docs-demo.ionic.io/assets/madison.jpg" alt="The Wisconsin State Capitol building in Madison, WI at night" ></ion-img>
+          </ion-thumbnail>
+          <ion-label>Food: {{ order.food }}</ion-label>
+        </ion-item>
+        <ion-chip>
+          <ion-icon name="stopwatch-outline"></ion-icon>
+          <ion-label>{{ order.status }}</ion-label>
+        </ion-chip>
+      </ion-list>
+      <ion-label>Description: {{ order.desc }}</ion-label>
+    </ion-card-content>
+  </ion-card>
+  <!-- <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
     <ion-fab-button (click)="pay()" >
       <ion-icon name="bag-check-outline"></ion-icon>
     </ion-fab-button> 
+  </ion-fab> -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
+    <ion-fab-button>
+      <ion-icon name="chevron-forward-circle"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="pay()" >
+        <ion-icon name="bag-check-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button>
+        <ion-icon name="help-circle-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
   </ion-fab>
 </ion-content>

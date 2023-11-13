@@ -53,6 +53,14 @@ export class SharedService {
     return this.http.put(url, null, { headers });
   }
 
+  getReservation(id: string, token: string): Observable<any> {
+    const url = `${serverEndpoint.url.urlReservation.reservations.cancelar}/${id}`;
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+    });
+    return this.http.put(url, null, { headers });
+  }
+
   getTabla(): Observable<any> {
     return this.http.get(serverEndpoint.url.urlReservation.reservations.table);
   }

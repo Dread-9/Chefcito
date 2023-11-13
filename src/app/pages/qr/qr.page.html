@@ -41,7 +41,7 @@
     </ion-fab-button>
   </ion-fab>
 
-  <video #video [hidden]="!scanActive" width="100%"></video>
+  <video #video [hidden]="!scanActive" width="300%"></video>
 
   <canvas #canvas hidden></canvas>
 
@@ -58,7 +58,6 @@
       {{ scanResult }} 
     </ion-card-content>
     <ion-button expand="full" (click)="reserva()" >
-      <!-- <ion-icon name="calendar-outline" slot="start"></ion-icon> -->
       Reservar
     </ion-button>
   </ion-card>

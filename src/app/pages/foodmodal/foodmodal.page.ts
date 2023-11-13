@@ -8,6 +8,7 @@ import { AuthService } from '../../services/auth.service';
 import { LocalNotificationsService } from '../../services/local-notifications.service';
 import { ShoppingCartService } from 'src/app/services/shopping-cart.service';
 import { OrderService } from '../../services/order.service';
+import { EMPTY, catchError, map } from 'rxjs';
 
 @Component({
   selector: 'app-foodmodal',
@@ -18,7 +19,7 @@ export class FoodmodalPage implements OnInit {
   @Input() botonCarritoModalDeshabilitado!: boolean;
   @Input() reservaActiva!: boolean;
   @ViewChild('swipeButton', { read: ElementRef }) swipeButton!: ElementRef;
-  carrito: { product: Food; quantity: number }[] = [];
+  carrito: { product: Food; quantity: number; comment?: string }[] = [];
   token: any;
   color = 'primary';
   text = 'Ordenar';
@@ -26,6 +27,8 @@ export class FoodmodalPage implements OnInit {
   colWidth!: number;
   translateX!: number;
   swipeGesture!: any;
+  saleId: string | null = null;
+  ordenado = false;
 
   constructor(
     private gestureCtrl: GestureController,
@@ -44,6 +47,7 @@ export class FoodmodalPage implements OnInit {
 
   ngOnInit() {
     this.token = this.auth.getToken();
+    this.saleId = localStorage.getItem('saleId');
   }
   ngAfterViewInit() {
     this.createSwipeGesture();
@@ -72,42 +76,80 @@ export class FoodmodalPage implements OnInit {
         }
       },
       onEnd: (detail) => {
+        this.swipeInProgress = false;
+        const columna = this.swipeButton.nativeElement.parentElement;
+
         if (this.translateX >= this.colWidth) {
+          this.ordenado = true;
           this.alertController
             .create({
               header: 'Confirmación',
-              message: 'Estas seguro de realizar esta reserva',
+              message: '¿Estás seguro de realizar esta reserva?',
               buttons: [
                 {
                   text: 'Cancelar',
                   role: 'cancel',
+                  handler: () => {
+                    this.ordenado = false;
+                    columna.style.transform = 'translateX(0)';
+                    columna.style.background = 'var(--ion-color-primary)';
+                    this.swipeButton.nativeElement.style.transform = 'translateX(0)';
+                    this.swipeButton.nativeElement.querySelector('ion-text').innerText = 'Ordenar';
+                  },
                 },
                 {
-                  text: 'Reservar',
-                  handler: () => {
-                    // this.orderService.postOrder(this.token, '')
-                    this.ngZone.run(() => {
-                      this.router.navigate(['/clientes', this.token, 'foodmodal', 'order']);
-                    });
-                    this.modalController.dismiss();
-                    this.toastService.showToast('Se ha realizado la orden', 'success', 3000);
-                    this.localNotificationsService.scheduleNotification(
-                      'Reserva',
-                      'Reserva realizada de manera exitosa',
-                      new Date(new Date().getTime() + 3000)
-                    );
+                  text: 'Ordenar',
+                  handler: async (data) => {
+                    const sale = localStorage.getItem('saleId');
+                    const desc = this.shoppingCartService.obtenerComentarioParaPedido();
+                    const food = this.carrito.map(item => item.product._id);
+                    const status = '651b2fdccdeb9672527e1d6f'
+                    const requestBody = { food, sale, desc, status };
+                    this.orderService.postOrder(this.token, requestBody)
+                      .pipe(
+                        map((response: any) => {
+                          this.ngZone.run(() => {
+                            this.router.navigate(['/clientes', this.token, 'foodmodal', 'order']);
+                          });
+                          this.modalController.dismiss();
+                          this.ordenado = false;
+                          columna.style.transform = 'translateX(0)';
+                          columna.style.background = 'var(--ion-color-primary)';
+                          this.swipeButton.nativeElement.style.transform = 'translateX(0)';
+                          this.swipeButton.nativeElement.querySelector('ion-text').innerText = 'Ordenar';
+                          this.toastService.showToast('Se ha realizado la orden', 'success', 3000);
+                          this.localNotificationsService.scheduleNotification(
+                            'Ordenar',
+                            'Orden realizada de manera exitosa',
+                            new Date(new Date().getTime() + 3000)
+                          );
+                        }),
+                        catchError((error: any) => {
+                          console.error(error);
+                          const errorData = error.error;
+                          this.toastService.showToast(errorData.msg, 'danger', 3000);
+                          return EMPTY;
+                        })
+                      )
+                      .subscribe();
                   },
                 },
               ],
             })
             .then((alert) => alert.present());
+        } else {
+          this.ordenado = false;
+          columna.style.transform = 'translateX(0)';
+          columna.style.background = 'var(--ion-color-primary)';
+          this.swipeButton.nativeElement.style.transform = 'translateX(0)';
+          this.swipeButton.nativeElement.querySelector('ion-text').innerText = 'Ordenar';
         }
-        this.swipeInProgress = false;
-        this.swipeButton.nativeElement.style.transform = 'translateX(0)';
       },
     });
     this.swipeGesture.enable(true);
   }
+
+
 
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));

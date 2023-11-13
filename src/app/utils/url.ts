@@ -23,7 +23,7 @@ export const url = {
     },
     urlOrder: {
         orders: {
-            order: `${BASE_URL}/order`,//pendiente
+            order: `${BASE_URL}/order`,
             typeorder: `${BASE_URL}/type/order`,//pendiente
             pay: `${BASE_URL}/sale/pay`,//pendiente
         }

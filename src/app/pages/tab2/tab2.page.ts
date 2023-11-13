@@ -186,7 +186,6 @@ export class Tab2Page {
       componentProps: {
         carrito: this.carrito,
         reservaActiva: this.sharedDataService.getReservations()?.active,
-        // botonCarritoModalDeshabilitado: this.botonCarritoModalDeshabilitado
       },
     });
     return await modal.present();
@@ -195,6 +194,13 @@ export class Tab2Page {
     const alert = await this.alertController.create({
       header: 'Confirmación',
       message: `¿Deseas agregar "${producto.name}" al carrito?`,
+      inputs: [
+        {
+          name: 'comentario',
+          type: 'text',
+          placeholder: 'Añadir comentario (opcional)',
+        }
+      ],
       buttons: [
         {
           text: 'Cancelar',
@@ -206,10 +212,10 @@ export class Tab2Page {
         },
         {
           text: 'Agregar',
-          handler: () => {
-            this.cartService.agregarAlCarrito(producto);
+          handler: (data) => {
+            const comentario = data.comentario || '';
+            this.cartService.agregarAlCarrito(producto, comentario);
             this.toastService.showToast('Producto agregado al carrito', 'success', 2000);
-            // this.botonCarritoModalDeshabilitado = false;
           },
         },
       ],

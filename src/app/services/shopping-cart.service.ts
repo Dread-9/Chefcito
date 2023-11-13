@@ -1,4 +1,3 @@
-// services/shopping-cart.service.ts
 import { Injectable } from '@angular/core';
 import { Food } from '../models/interfaceFood';
 
@@ -6,14 +5,18 @@ import { Food } from '../models/interfaceFood';
   providedIn: 'root'
 })
 export class ShoppingCartService {
-  private cartItems: { product: Food; quantity: number }[] = [];
+  private cartItems: { product: Food; quantity: number; comment?: string }[] = [];
 
-  agregarAlCarrito(producto: Food) {
+  agregarAlCarrito(producto: Food, comentario?: string) {
     const item = this.cartItems.find((item) => item.product._id === producto._id);
     if (item) {
       item.quantity++;
+      if (comentario !== undefined) {
+        item.comment = comentario;
+      }
     } else {
-      this.cartItems.push({ product: producto, quantity: 1 });
+      const newItem = { product: producto, quantity: 1, comment: comentario };
+      this.cartItems.push(newItem);
     }
   }
 
@@ -35,5 +38,10 @@ export class ShoppingCartService {
 
   vaciarCarrito() {
     this.cartItems = [];
+  }
+
+  obtenerComentarioParaPedido() {
+    const comentarios = this.cartItems.map(item => item.comment);
+    return comentarios.filter(comment => comment !== undefined).join(', ');
   }
 }
