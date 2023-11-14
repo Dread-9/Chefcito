@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { OrderService } from '../../services/order.service';
-import { Order } from '../../models/interfaceOrder';
+import { Order, OrderStatus } from '../../models/interfaceOrder';
+import { Food, FoodDetails } from '../../models/interfaceFood';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'app-order',
@@ -10,28 +12,57 @@ import { Order } from '../../models/interfaceOrder';
   styleUrls: ['./order.page.scss'],
 })
 export class OrderPage implements OnInit {
-  orders: Order[] = [];
+  food: Food[] = [];
+  foodDetails: FoodDetails[] = [];
   token: any;
+  orderId!: any[];
+  orderid: string | null = null;
+  saleId: string | null = null;
+  orders: Order[] = [];
+  orderStatus: OrderStatus[] = [];
   constructor(
-    private router: Router,
+    private toastService: ToastService,
     private auth: AuthService,
     private orderService: OrderService,
+    private route: ActivatedRoute,
+    private router: Router,
   ) {
+    this.saleId = localStorage.getItem('saleId');
   }
   ngOnInit() {
     this.token = this.auth.getToken();
     this.order();
+    this.typeOrder();
+    this.orderId = this.route.snapshot.params['orderId'];
+  }
+  typeOrder() {
+    this.orderService.getState().subscribe({
+      next: (response) => {
+        this.orderStatus = response as OrderStatus[];
+        console.log('Order Status:', this.orderStatus); // Add this line
+      },
+      error: (error) => {
+        const errorData = error.error;
+        this.toastService.showToast(errorData.msg, 'danger', 3000);
+      }
+    });
   }
   order() {
-    this.orderService.getOrder(this.token).subscribe(
-      (orders: Order[]) => {
-        this.orders = orders;
-        const primeraOrden = orders[0];
+    const saleId = localStorage.getItem('saleId');
+    if (!saleId) {
+      this.toastService.showToast('No se encontró saleId en el localStorage', 'danger', 3000);
+      return;
+    }
+    this.orderService.getOrderById(this.token, saleId).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.orders = response as Order[];
       },
-      (error) => {
-        console.error('Error al obtener la orden:', error);
+      error: (error) => {
+        const errorData = error.error;
+        this.toastService.showToast(errorData.msg, 'danger', 3000);
       }
-    );
+    });
   }
   pay() {
     this.router.navigate(['/clientes', this.token, 'foodmodal', 'order', 'pay']);

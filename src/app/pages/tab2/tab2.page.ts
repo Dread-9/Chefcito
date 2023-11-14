@@ -66,8 +66,6 @@ export class Tab2Page {
     this.food();
     this.fecha();
     this.route.queryParams.subscribe((params) => {
-      // this.reservation = JSON.parse(params['reservation']);
-      // this.sale = JSON.parse(params['sale']);
       this.reservationId = this.route.snapshot.queryParams['saleId'];
     });
     this.sharedDataService.mostrarCarta$.subscribe((mostrarCarta) => {

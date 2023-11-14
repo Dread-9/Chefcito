@@ -24,6 +24,7 @@ export const url = {
     urlOrder: {
         orders: {
             order: `${BASE_URL}/order`,
+            orderbysale: `${BASE_URL}/order/sale`,
             typeorder: `${BASE_URL}/type/order`,//pendiente
             pay: `${BASE_URL}/sale/pay`,//pendiente
         }

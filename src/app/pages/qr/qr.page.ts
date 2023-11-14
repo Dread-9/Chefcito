@@ -77,8 +77,6 @@ export class QrPage implements OnInit {
             this.sharedDataService.setSales(saleData);
             this.router.navigate(['clientes', token, 'tab2'], {
               queryParams: {
-                // reservationData: JSON.stringify(reservationData),
-                // saleData: JSON.stringify(saleData),
                 saleId: saleId,
               }
             });

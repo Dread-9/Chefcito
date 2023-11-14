@@ -42,6 +42,6 @@ export class ShoppingCartService {
 
   obtenerComentarioParaPedido() {
     const comentarios = this.cartItems.map(item => item.comment);
-    return comentarios.filter(comment => comment !== undefined).join(', ');
+    return comentarios.filter(comment => comment !== 'Ninguno').join(', ');
   }
 }
