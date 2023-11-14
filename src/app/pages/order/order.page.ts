@@ -89,4 +89,6 @@ export class OrderPage implements OnInit {
   pay() {
     this.router.navigate(['/clientes', this.token, 'foodmodal', 'order', 'pay']);
   }
+  help() {
+  }
 }

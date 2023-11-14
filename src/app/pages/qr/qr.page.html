@@ -1,8 +1,5 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
-    </ion-buttons>  
     <ion-title>
         Bienvenido,
         <ion-text *ngIf="user">
@@ -47,18 +44,18 @@
 
   <ion-button expand="full" (click)="stopScan()" color="danger" *ngIf="scanActive">
     <ion-icon slot="start" name="close"></ion-icon>
-    Stop scan
+    Detener
   </ion-button>
 
   <ion-card *ngIf="scanResult">
     <ion-card-header>
-      <ion-card-title>Resultado</ion-card-title>
+      <ion-card-title>Resultado de scaneo</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       {{ scanResult }} 
     </ion-card-content>
     <ion-button expand="full" (click)="reserva()" >
-      Reservar
+      Reservar Mesa 
     </ion-button>
   </ion-card>
 </ion-content>

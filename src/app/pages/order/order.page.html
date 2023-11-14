@@ -9,9 +9,9 @@
 
 <ion-content [fullscreen]="true">
   <ion-card *ngIf="orders">
-    <ion-card-header>
+    <!-- <ion-card-header>
       <ion-card-title>Detalles del Pedido</ion-card-title>
-    </ion-card-header>
+    </ion-card-header> -->
     <ion-card-content>
       <ion-list>
         <ion-item *ngFor="let order of orders">
@@ -41,7 +41,7 @@
       <ion-fab-button (click)="pay()" >
         <ion-icon name="bag-check-outline"></ion-icon>
       </ion-fab-button>
-      <ion-fab-button>
+      <ion-fab-button (click)="help()">
         <ion-icon name="help-circle-outline"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>
