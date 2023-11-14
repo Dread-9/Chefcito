@@ -35,4 +35,13 @@ export class OrderService {
   getState(): Observable<Object> {
     return this.http.get(serverEndpoint.url.urlOrder.orders.typeorder);
   }
+
+  pay(id: string, token: string): Observable<any> {
+    const url = `${serverEndpoint.url.urlReservation.reservations.cancelar}/${id}`;
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+    });
+
+    return this.http.put(url, null, { headers });
+  }
 }

@@ -35,7 +35,7 @@ export class OrderPage implements OnInit {
     this.typeOrder();
     this.orderId = this.route.snapshot.params['orderId'];
   }
-  typeOrder() {
+  async typeOrder() {
     this.orderService.getState().subscribe({
       next: (response) => {
         this.orderStatus = response as OrderStatus[];
@@ -69,7 +69,7 @@ export class OrderPage implements OnInit {
   //   }
   //   return { name: 'Unknown', color: 'warning' };
   // }
-  order() {
+  async order() {
     const saleId = localStorage.getItem('saleId');
     if (!saleId) {
       this.toastService.showToast('No se encontró saleId en el localStorage', 'danger', 3000);

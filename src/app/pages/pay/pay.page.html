@@ -8,14 +8,10 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-list>
-    <ion-item>
-      <ion-label>Lomo a lo pobre</ion-label>
-      <ion-label color="primary">$8.000 pesos</ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>Bebida fanta 500cc</ion-label>
-      <ion-label color="primary">$2.500 pesos</ion-label>
+  <ion-list *ngIf="orders">
+    <ion-item *ngFor="let order of orders">
+      <ion-label>{{ order.food.name }}</ion-label>
+      <ion-label color="primary">${{ order.food.price }} pesos</ion-label>
     </ion-item>
   </ion-list>
   <ion-card>
@@ -33,7 +29,7 @@
           <p>Monto sugerido 10%</p>
         </ion-item>
         <ion-item>
-          <ion-input label="Propina" type="number" placeholder="1000" placeholder="Ingresa monto de propina"></ion-input>
+          <ion-input label="Propina" type="number" placeholder="1000" placeholder="Ingresa monto de propina" [(ngModel)]="propinaIngresada"></ion-input>
         </ion-item>
       </ion-list>
     </ion-card-content>
@@ -41,19 +37,19 @@
   <ion-list>
     <ion-item>
       <ion-label>Total de productos</ion-label>
-      <ion-label>$8.000 pesos</ion-label>
+      <ion-label>${{ getTotal() }} pesos</ion-label>
     </ion-item>
     <ion-item>
       <ion-label>Iva</ion-label>
-      <ion-label>$2.500 pesos</ion-label>
+      <ion-label>${{ getIva() }} pesos</ion-label>
     </ion-item>
     <ion-item>
       <ion-label>Propina</ion-label>
-      <ion-label>$1.000 pesos</ion-label>
+      <ion-label>${{ getPropina() }} pesos</ion-label>
     </ion-item>
     <ion-item>
       <ion-label color="success">Total a Pagar</ion-label>
-      <ion-label color="success">$11.500 pesos</ion-label>
+      <ion-label color="success">${{ getTotalAPagar() }} pesos</ion-label>
     </ion-item>
   </ion-list>
   <ion-button expand="full" (click)="pago()">Pagar</ion-button>

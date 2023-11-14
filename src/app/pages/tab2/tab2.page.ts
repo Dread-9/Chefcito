@@ -111,7 +111,7 @@ export class Tab2Page {
           handler: () => {
             const saleId = localStorage.getItem('saleId');
             if (!saleId) {
-              this.toastService.showToast('No se encontró saleId en el localStorage', 'danger', 3000);
+              this.toastService.showToast('No se encontró id de Reserva', 'danger', 3000);
               return;
             }
             this.sharedDataService.DeleteReservation(saleId, this.token).subscribe({
