@@ -21,10 +21,15 @@
           <ion-label>
             <h2>{{ order.food.name }}</h2>
             <p>Comentario: {{ order.desc }}</p>
-            <p>{{ order.status }}</p>
-            <p>Precio: ${{ order.food.price }}pesos</p>
+            <ion-chip color="primary">{{ getStatusName(order.status) }}</ion-chip>
+            <!-- <ion-chip color="primary">{{ order.status }}</ion-chip> -->
+            <p>Precio: ${{ order.food.price }} pesos</p>
           </ion-label>
         </ion-item>
+        <!-- <ion-item *ngFor="let order of orders">
+          <ion-chip [color]="getStatusInfo(order.status).color">{{ getStatusInfo(order.status).name }}</ion-chip>
+          <ion-chip color="primary">{{ getStatusName(order.status) }}</ion-chip>
+        </ion-item> -->
       </ion-list>
     </ion-card-content>
   </ion-card>

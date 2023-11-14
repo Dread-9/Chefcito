@@ -39,7 +39,7 @@ export class OrderPage implements OnInit {
     this.orderService.getState().subscribe({
       next: (response) => {
         this.orderStatus = response as OrderStatus[];
-        console.log('Order Status:', this.orderStatus); // Add this line
+        console.log('Order Status:', this.orderStatus);
       },
       error: (error) => {
         const errorData = error.error;
@@ -47,6 +47,28 @@ export class OrderPage implements OnInit {
       }
     });
   }
+  getStatusName(statusId: string): string {
+    const status = this.orderStatus.find((s) => s._id === statusId);
+    return status ? status.name : 'Unknown';
+  }
+  // getStatusInfo(statusId: string): { name: string; color: string } {
+  //   const status = this.orderStatus.find((s) => s._id === statusId);
+  //   if (status) {
+  //     switch (status.name) {
+  //       case 'Ordenado':
+  //         return { name: status.name, color: 'primary' };
+  //       case 'Orden Lista':
+  //         return { name: status.name, color: 'secondary' };
+  //       case 'Entregado':
+  //         return { name: status.name, color: 'success' };
+  //       case 'Cancelado':
+  //         return { name: status.name, color: 'danger' };
+  //       default:
+  //         return { name: status.name, color: 'medium' };
+  //     }
+  //   }
+  //   return { name: 'Unknown', color: 'warning' };
+  // }
   order() {
     const saleId = localStorage.getItem('saleId');
     if (!saleId) {

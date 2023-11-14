@@ -102,14 +102,11 @@ export class FoodmodalPage implements OnInit {
                 {
                   text: 'Ordenar',
                   handler: async (data) => {
-                    // const food = this.carrito.map(item => item.product._id);
-                    // const desc = this.shoppingCartService.obtenerComentarioParaPedido();
                     const sale = localStorage.getItem('saleId');
                     const status = '651b2fdccdeb9672527e1d6f';
-                    const desc = this.shoppingCartService.obtenerComentarioParaPedido();
-
                     for (const cartItem of this.carrito) {
                       const food = [cartItem.product._id];
+                      const desc = cartItem.comment || 'Ninguno';
                       const requestBody = { food, sale, desc, status };
                       this.orderService.postOrder(this.token, requestBody)
                         .pipe(

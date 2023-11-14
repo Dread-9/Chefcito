@@ -6,16 +6,19 @@ import { Food } from '../models/interfaceFood';
 })
 export class ShoppingCartService {
   private cartItems: { product: Food; quantity: number; comment?: string }[] = [];
-
   agregarAlCarrito(producto: Food, comentario?: string) {
     const item = this.cartItems.find((item) => item.product._id === producto._id);
     if (item) {
       item.quantity++;
       if (comentario !== undefined) {
-        item.comment = comentario;
+        item.comment = comentario.trim() !== '' ? comentario : 'Ninguno';
       }
     } else {
-      const newItem = { product: producto, quantity: 1, comment: comentario };
+      const newItem = {
+        product: producto,
+        quantity: 1,
+        comment: comentario !== undefined && comentario.trim() !== '' ? comentario : 'Ninguno',
+      };
       this.cartItems.push(newItem);
     }
   }
