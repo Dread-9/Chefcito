@@ -8,7 +8,7 @@ import { AuthService } from '../../services/auth.service';
 import { LocalNotificationsService } from '../../services/local-notifications.service';
 import { ShoppingCartService } from 'src/app/services/shopping-cart.service';
 import { OrderService } from '../../services/order.service';
-import { EMPTY, catchError, map, of } from 'rxjs';
+import { EMPTY, catchError, concatMap, forkJoin, from, map, of } from 'rxjs';
 import { Order } from '../../models/interfaceOrder';
 
 @Component({
@@ -50,6 +50,14 @@ export class FoodmodalPage implements OnInit {
   ngOnInit() {
     this.token = this.auth.getToken();
     this.saleId = localStorage.getItem('saleId');
+    this.carrito = this.shoppingCartService.obtenerCarrito();
+    // const cartItemsFromStorage = localStorage.getItem('cartItems');
+    // if (cartItemsFromStorage) {
+    //   this.carrito = JSON.parse(cartItemsFromStorage);
+    // }
+    this.shoppingCartService.obtenerCarritoObservable().subscribe((carrito) => {
+      this.carrito = carrito;
+    });
   }
   ngAfterViewInit() {
     this.createSwipeGesture();
@@ -112,10 +120,13 @@ export class FoodmodalPage implements OnInit {
                         .pipe(
                           map((response: any) => {
                             this.ngZone.run(() => {
-                              this.router.navigate(['clientes', this.token, 'foodmodal', 'order',]);
+                              this.router.navigate(['clientes', this.token, 'foodmodal', 'order']);
                             });
                             this.modalController.dismiss();
                             this.ordenado = false;
+                            this.shoppingCartService.limpiarCarrito();
+                            localStorage.removeItem('cartItems');
+                            this.actualizarCarrito([]);
                             this.toastService.showToast('Se ha realizado la orden', 'success', 3000);
                             this.localNotificationsService.scheduleNotification(
                               'Ordenar',
@@ -153,9 +164,6 @@ export class FoodmodalPage implements OnInit {
     });
     this.swipeGesture.enable(true);
   }
-
-
-
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
@@ -185,13 +193,55 @@ export class FoodmodalPage implements OnInit {
       })
       .then((alert) => alert.present());
   }
+  // aumentarCantidad(item: { product: Food; quantity: number }) {
+  //   const nuevoCarrito = this.shoppingCartService.obtenerCarrito().map((cartItem: { product: Food; quantity: number }) => {
+  //     if (cartItem.product._id === item.product._id) {
+  //       return { ...cartItem, quantity: cartItem.quantity + 1 };
+  //     }
+  //     return cartItem;
+  //   });
+  //   this.actualizarCarrito(nuevoCarrito);
+  // }
+
+  // disminuirCantidad(item: { product: Food; quantity: number }) {
+  //   const nuevoCarrito = this.shoppingCartService.obtenerCarrito().map((cartItem: { product: Food; quantity: number }) => {
+  //     if (cartItem.product._id === item.product._id && cartItem.quantity > 1) {
+  //       return { ...cartItem, quantity: cartItem.quantity - 1 };
+  //     }
+  //     return cartItem;
+  //   });
+  //   this.actualizarCarrito(nuevoCarrito);
+  // }
+
+  // private actualizarCarrito(nuevoCarrito: { product: Food; quantity: number }[]) {
+  //   this.shoppingCartService.actualizarCarrito(nuevoCarrito);
+  // }
   aumentarCantidad(item: { product: Food; quantity: number }) {
-    item.quantity++;
+    const nuevoCarrito = this.shoppingCartService.obtenerCarrito().map((cartItem: { product: Food; quantity: number }) => {
+      if (cartItem.product._id === item.product._id) {
+        return { ...cartItem, quantity: cartItem.quantity + 1 };
+      }
+      return cartItem;
+    });
+    this.actualizarCarrito(nuevoCarrito);
   }
 
   disminuirCantidad(item: { product: Food; quantity: number }) {
-    if (item.quantity > 1) {
-      item.quantity--;
+    const nuevoCarrito = this.shoppingCartService.obtenerCarrito().map((cartItem: { product: Food; quantity: number }) => {
+      if (cartItem.product._id === item.product._id && cartItem.quantity > 1) {
+        return { ...cartItem, quantity: cartItem.quantity - 1 };
+      }
+      return cartItem;
+    });
+    this.actualizarCarrito(nuevoCarrito);
+  }
+
+  private actualizarCarrito(nuevoCarrito: { product: Food; quantity: number }[]) {
+    this.shoppingCartService.actualizarCarrito(nuevoCarrito);
+
+    if (nuevoCarrito.length === 0) {
+      localStorage.removeItem('cartItems');
+      this.shoppingCartService.limpiarCarrito();
     }
   }
   async alert() {

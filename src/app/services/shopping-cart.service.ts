@@ -1,11 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Food } from '../models/interfaceFood';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ShoppingCartService {
   private cartItems: { product: Food; quantity: number; comment?: string }[] = [];
+  private cartSubject: BehaviorSubject<{ product: Food; quantity: number; comment?: string }[]> = new BehaviorSubject<{ product: Food; quantity: number; comment?: string }[]>([]);
+
+  constructor() {
+    const storedCart = localStorage.getItem('cartItems');
+    if (storedCart) {
+      this.cartItems = JSON.parse(storedCart);
+      this.cartSubject.next([...this.cartItems]); // Notificar cambios
+    }
+  }
   agregarAlCarrito(producto: Food, comentario?: string) {
     const item = this.cartItems.find((item) => item.product._id === producto._id);
     if (item) {
@@ -21,30 +31,58 @@ export class ShoppingCartService {
       };
       this.cartItems.push(newItem);
     }
+    localStorage.setItem('cartItems', JSON.stringify(this.cartItems)); // Actualizar localStorage
+    this.cartSubject.next([...this.cartItems]);
   }
-
+  // eliminarDelCarrito(producto: Food) {
+  //   const item = this.cartItems.find((item) => item.product._id === producto._id);
+  //   if (item) {
+  //     if (item.quantity > 1) {
+  //       item.quantity--;
+  //     } else {
+  //       const index = this.cartItems.indexOf(item);
+  //       this.cartItems.splice(index, 1);
+  //     }
+  //   }
+  //   localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
+  //   this.cartSubject.next([...this.cartItems]);
+  // }
   eliminarDelCarrito(producto: Food) {
-    const item = this.cartItems.find((item) => item.product._id === producto._id);
-    if (item) {
-      if (item.quantity > 1) {
-        item.quantity--;
+    const itemIndex = this.cartItems.findIndex((item) => item.product._id === producto._id);
+    if (itemIndex !== -1) {
+      if (this.cartItems[itemIndex].quantity > 1) {
+        this.cartItems[itemIndex].quantity--;
       } else {
-        const index = this.cartItems.indexOf(item);
-        this.cartItems.splice(index, 1);
+        this.cartItems.splice(itemIndex, 1);
       }
+      localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
+      this.cartSubject.next([...this.cartItems]);
     }
   }
+  obtenerCarritoObservable(): Observable<{ product: Food; quantity: number; comment?: string }[]> {
+    return this.cartSubject.asObservable();
+  }
 
+  actualizarCarrito(nuevoCarrito: { product: Food; quantity: number; comment?: string }[]) {
+    this.cartItems = nuevoCarrito;
+    localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
+    this.cartSubject.next([...this.cartItems]);
+  }
+
+
+  // obtenerCarrito() {
+  //   return this.cartItems;
+  // }
   obtenerCarrito() {
-    return this.cartItems;
+    const storedCart = localStorage.getItem('cartItems');
+    return storedCart ? JSON.parse(storedCart) : [];
   }
-
-  vaciarCarrito() {
-    this.cartItems = [];
-  }
-
   obtenerComentarioParaPedido() {
     const comentarios = this.cartItems.map(item => item.comment);
     return comentarios.filter(comment => comment !== 'Ninguno').join(', ');
+  }
+
+  limpiarCarrito() {
+    this.cartItems = [];
   }
 }

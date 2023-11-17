@@ -33,6 +33,7 @@ export class Tab3Page {
     });
     loading.present();
     try {
+      sessionStorage.clear();
       localStorage.clear();
       this.router.navigateByUrl('/');
       this.toastService.showToast(this.mensajesGlobal.SOLICITUD_SESION.MSJ_SESION_EXITOS.logout, 'success', 3000);

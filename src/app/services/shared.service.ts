@@ -16,28 +16,44 @@ export class SharedService {
 
   constructor(private http: HttpClient) { }
 
+  // setMostrarCarta(value: boolean) {
+  //   this.mostrarCartaSubject.next(value);
+  // }
   setMostrarCarta(value: boolean) {
     this.mostrarCartaSubject.next(value);
+    sessionStorage.setItem('mostrarCarta', value ? 'true' : 'false');
+    localStorage.setItem('mostrarCarta', value ? 'true' : 'false');
   }
 
   setReservations(reservation: Reservation) {
     this.reservations = reservation;
+    // Guardar en localStorage y sessionStorage
+    localStorage.setItem('reservationData', JSON.stringify(reservation));
+    sessionStorage.setItem('reservationData', JSON.stringify(reservation));
   }
 
   getReservations() {
+    localStorage.setItem('reservationData', JSON.stringify(this.reservations));
     return this.reservations;
   }
 
   setSales(sale: Sale) {
     this.sales = sale;
+    // Guardar en localStorage y sessionStorage
+    localStorage.setItem('saleData', JSON.stringify(sale));
+    sessionStorage.setItem('saleData', JSON.stringify(sale));
   }
 
   getSales() {
     return this.sales;
   }
 
+
   setReservationId(reservationId: string) {
     this.reservationId = reservationId;
+    // Guardar en localStorage y sessionStorage
+    localStorage.setItem('reservationId', reservationId);
+    sessionStorage.setItem('reservationId', reservationId);
   }
 
   getReservationId() {

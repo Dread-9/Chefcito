@@ -72,9 +72,14 @@ export class QrPage implements OnInit {
             const saleData: Sale = response.sale;
             const saleId = saleData._id;
             console.log('Request', saleId);
+            // localStorage.setItem('reservationData', JSON.stringify(reservationData));
+            // localStorage.setItem('saleData', JSON.stringify(saleData));
+            // sessionStorage.setItem('reservationData', JSON.stringify(reservationData));
+            // sessionStorage.setItem('saleData', JSON.stringify(saleData));
             localStorage.setItem('saleId', saleId);
-            this.sharedDataService.setReservations(reservationData);
-            this.sharedDataService.setSales(saleData);
+            sessionStorage.setItem('saleId', saleId);
+            // this.sharedDataService.setReservations(reservationData);
+            // this.sharedDataService.setSales(saleData);
             this.router.navigate(['clientes', token, 'tab2'], {
               queryParams: {
                 saleId: saleId,

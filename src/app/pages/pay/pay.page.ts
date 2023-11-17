@@ -27,6 +27,7 @@ export class PayPage implements OnInit {
   sharedDataService: SharedService;
   user: any;
   userEmail!: string;
+  mostrarCarta: boolean = false;
   constructor(
     private toastService: ToastService,
     private auth: AuthService,
@@ -40,12 +41,28 @@ export class PayPage implements OnInit {
   ) {
     this.sharedDataService = sharedDataService;
     this.saleId = localStorage.getItem('saleId');
+    this.sharedDataService.mostrarCarta$.subscribe((mostrarCarta) => {
+      this.mostrarCarta = mostrarCarta;
+    });
   }
 
   ngOnInit() {
     this.token = this.auth.getToken();
-    this.token = this.auth.getToken();
-    this.order();
+    const saleId = localStorage.getItem('saleId');
+    if (!saleId) {
+      this.toastService.showToast('No se encontró id de venta ', 'danger', 3000);
+      return;
+    }
+    this.orderService.getOrderById(this.token, saleId).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.orders = response as Order[];
+      },
+      error: (error) => {
+        const errorData = error.error;
+        this.toastService.showToast(errorData.msg, 'danger', 3000);
+      }
+    });
     this.user = this.userService.getUser();
     this.userEmail = this.user.mail;
     console.log('Correo electrónico del usuario:', this.userEmail);
@@ -85,25 +102,6 @@ export class PayPage implements OnInit {
     const totalPagar = totalProductos + iva + propina;
     return totalPagar;
   }
-
-  async order() {
-    const saleId = localStorage.getItem('saleId');
-    if (!saleId) {
-      this.toastService.showToast('No se encontró id de venta ', 'danger', 3000);
-      return;
-    }
-    this.orderService.getOrderById(this.token, saleId).subscribe({
-      next: (response) => {
-        console.log(response);
-        this.orders = response as Order[];
-      },
-      error: (error) => {
-        const errorData = error.error;
-        this.toastService.showToast(errorData.msg, 'danger', 3000);
-      }
-    });
-  }
-
   async pago() {
     const loading = await this.loadingController.create({
       message: 'Generando Pago...',
@@ -126,14 +124,15 @@ export class PayPage implements OnInit {
             loading.present();
             const saleId = localStorage.getItem('saleId');
             if (!saleId) {
-              this.toastService.showToast('No se encontró saleId en el localStorage', 'danger', 3000);
+              this.toastService.showToast('No se encontró Id de venta', 'danger', 3000);
               return;
             }
             this.orderService.pay(saleId, this.token).subscribe({
               next: (response) => {
                 this.generatePDF();
                 localStorage.removeItem('saleId');
-                this.sharedDataService.setMostrarCarta(false);
+                sessionStorage.removeItem('saleId');
+                // this.sharedDataService.setMostrarCarta(false);
                 this.router.navigate(['clientes', this.token, 'tab1']);
                 this.toastService.showToast('Se ha realizado el pago de manera exitosa', 'success', 3000);
                 this.localNotificationsService.scheduleNotification(
@@ -155,48 +154,74 @@ export class PayPage implements OnInit {
   }
 
 
+  // generatePDF(): void {
+  //   const documentDefinition: TDocumentDefinitions = {
+  //     content: [
+  //       { text: 'Boleta de Compra', style: 'header' },
+  //       { text: 'Detalles de la orden:', style: 'subheader' },
+  //       this.generateProductList(),
+  //       { text: `Total a pagar: $${this.getTotalAPagar()} pesos`, style: 'total' },
+  //       { text: `Iva: $${this.getIva()} pesos`, style: 'details' },
+  //       { text: `Propina: $${this.getPropina()} pesos`, style: 'details' },
+  //       { text: '¡Gracias por su compra!', style: 'footer' }
+  //     ],
+  //     styles: {
+  //       header: { fontSize: 22, bold: true, alignment: 'center', margin: [0, 0, 0, 15] },
+  //       subheader: { fontSize: 18, bold: true, margin: [0, 15, 0, 5] },
+  //       total: { fontSize: 16, bold: true, margin: [0, 15, 0, 15] },
+  //       details: { fontSize: 14, margin: [0, 5, 0, 5] },
+  //       footer: { fontSize: 14, bold: true, alignment: 'center', margin: [0, 15, 0, 0] },
+  //     },
+  //   };
+  //   const pdfDocGenerator = pdfMake.createPdf(documentDefinition);
+  //   pdfDocGenerator.download('boleta_de_compra.pdf');
+  // }
+  // generateProductList(): any[] {
+  //   const productList = this.orders.map(order => {
+  //     return [
+  //       { text: order.food.name, style: 'product' },
+  //       { text: `$${order.food.price} pesos`, style: 'price' },
+  //     ];
+  //   });
+  //   return productList;
+  // }
   generatePDF(): void {
     const documentDefinition: TDocumentDefinitions = {
+      pageSize: { width: 400, height: 800 }, // Tamaño de la hoja más larga
+      pageMargins: [20, 20, 20, 20], // Márgenes
       content: [
         { text: 'Boleta de Compra', style: 'header' },
         { text: 'Detalles de la orden:', style: 'subheader' },
+        { text: '------------------------------------', style: 'divider' },
         this.generateProductList(),
-        { text: `Total a pagar: $${this.getTotalAPagar()} pesos`, style: 'total' },
-        { text: `Iva: $${this.getIva()} pesos`, style: 'details' },
-        { text: `Propina: $${this.getPropina()} pesos`, style: 'details' },
+        { text: '------------------------------------', style: 'divider' },
+        { text: { text: `Total a pagar: $${this.getTotalAPagar()} pesos`, bold: false, fontSize: 10 }, style: 'total' }, // Texto más delgado y pequeño
+        { text: { text: `Iva: $${this.getIva()} pesos`, bold: false, fontSize: 10 }, style: 'details' }, // Texto más delgado y pequeño
+        { text: { text: `Propina: $${this.getPropina()} pesos`, bold: false, fontSize: 10 }, style: 'details' }, // Texto más delgado y pequeño
+        { text: '------------------------------------', style: 'divider' },
         { text: '¡Gracias por su compra!', style: 'footer' }
       ],
       styles: {
-        header: { fontSize: 22, bold: true, alignment: 'center', margin: [0, 0, 0, 15] },
-        subheader: { fontSize: 18, bold: true, margin: [0, 15, 0, 5] },
-        total: { fontSize: 16, bold: true, margin: [0, 15, 0, 15] },
-        details: { fontSize: 14, margin: [0, 5, 0, 5] },
-        footer: { fontSize: 14, bold: true, alignment: 'center', margin: [0, 15, 0, 0] },
+        header: { fontSize: 14, bold: true, alignment: 'center', margin: [0, 0, 0, 10] },
+        subheader: { fontSize: 10, bold: true, margin: [0, 10, 0, 5] },
+        divider: { margin: [0, 5, 0, 5], alignment: 'center' },
+        total: { fontSize: 8, margin: [0, 10, 0, 10], alignment: 'center' },
+        details: { fontSize: 8, margin: [0, 5, 0, 5], alignment: 'center' },
+        footer: { fontSize: 8, bold: true, alignment: 'center', margin: [0, 10, 0, 0] },
       },
     };
     const pdfDocGenerator = pdfMake.createPdf(documentDefinition);
-    pdfDocGenerator.download('boleta_compra.pdf');
-
-    // const pdfDocGenerator = pdfMake.createPdf(documentDefinition);
-    // pdfDocGenerator.download('boleta_compra.pdf');
-    // const pdfDocGenerator = pdfMake.createPdf(documentDefinition);
-    // pdfDocGenerator.getBlob((blob) => {
-    //   const filename = 'boleta_compra.pdf';
-    //   const objectURL = URL.createObjectURL(blob);
-
-    //   const mailtoLink = `mailto:${userEmail}?subject=Boleta%20de%20Compra&body=Adjunto%20encontrarás%20la%20boleta%20de%20compra%20en%20formato%20PDF.%0D%0A%0D%0A¡Gracias!&attachment=${objectURL}`;
-
-    //   window.location.href = mailtoLink;
-    // });
+    pdfDocGenerator.download('boleta_de_compra.pdf');
   }
+
   generateProductList(): any[] {
     const productList = this.orders.map(order => {
       return [
         { text: order.food.name, style: 'product' },
-        { text: `$${order.food.price} pesos`, style: 'price' },
+        { text: { text: `$${order.food.price} pesos`, bold: false, fontSize: 8 }, style: 'price', alignment: 'right' },
       ];
     });
-
     return productList;
   }
+
 }

@@ -10,15 +10,16 @@
 <ion-content [fullscreen]="true">
   <ion-card *ngIf="orders">
     <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let order of orders">
+      <ion-list *ngFor="let order of orders">
+        <ion-item>
           <ion-thumbnail slot="start">
             <img [src]="order.food.img" alt="{{ order.food.name }}" />
           </ion-thumbnail>
           <ion-label>
             <h2>{{ order.food.name }}</h2>
             <p>Comentario: {{ order.desc }}</p>
-            <ion-chip color="primary">{{ getStatusName(order.status) }}</ion-chip>
+            <ion-chip [color]="getStatusInfo(order.status).color">{{ getStatusInfo(order.status).name }}</ion-chip>
+            <!-- <ion-chip color="primary">{{ getStatusName(order.status) }}</ion-chip> -->
             <!-- <ion-chip color="primary">{{ order.status }}</ion-chip> -->
             <p>Precio: ${{ order.food.price }} pesos</p>
           </ion-label>
@@ -35,10 +36,10 @@
       <ion-icon name="chevron-forward-circle"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="top">
-      <ion-fab-button (click)="pay()" >
+      <ion-fab-button (click)="pay()" [disabled]="!allOrdersDelivered()" [class.success]="allOrdersDelivered()">
         <ion-icon name="bag-check-outline"></ion-icon>
       </ion-fab-button>
-      <ion-fab-button (click)="help()">
+      <ion-fab-button (click)="help()" >
         <ion-icon name="help-circle-outline"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>

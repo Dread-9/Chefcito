@@ -4,7 +4,7 @@ import * as global from '../../../global'
 import * as serverEndpoint from '../../../utils/url'
 import { ToastService } from '../../../services/toast.service';
 import { Router } from '@angular/router';
-import { LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
@@ -27,7 +27,8 @@ export class SignupPage implements OnInit {
     private auth: AuthService,
     private router: Router,
     private toastService: ToastService,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private alertController: AlertController,
   ) {
     this.SignUpFormulario;
   }
@@ -65,9 +66,18 @@ export class SignupPage implements OnInit {
           body: JSON.stringify(requestData),
         });
         if (response.ok) {
+          const responseData = await response.json();
+          const userId = responseData._id;
           this.auth.signup(requestData);
+          const alert = await this.alertController.create({
+            header: 'Mensaje informativo',
+            message: 'Se ha enviado un correo para validar tu usuario',
+            buttons: ['Entendido'],
+          });
+          await alert.present();
           this.limpiarCampos();
           this.toastService.showToast(this.mensajesGlobal.SOLICITUD_SESION.MSJ_SESION_EXITOS.signup, 'success', 3000);
+          this.auth.verify(userId);
           this.router.navigate(['/']);
         } else {
           const errorData = await response.json();
@@ -83,5 +93,4 @@ export class SignupPage implements OnInit {
     }
 
   }
-
 }

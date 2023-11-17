@@ -4,6 +4,7 @@ export const url = {
         sesion: {
             login: `${BASE_URL}/login`,
             signup: `${BASE_URL}/signup`,
+            verify: `${BASE_URL}/verify`,
         },
     },
     urlFood: {
@@ -25,8 +26,8 @@ export const url = {
         orders: {
             order: `${BASE_URL}/order`,
             orderbysale: `${BASE_URL}/order/sale`,
-            typeorder: `${BASE_URL}/type/order`,//pendiente
-            pay: `${BASE_URL}/sale/pay`,//pendiente
+            typeorder: `${BASE_URL}/type/order`,
+            pay: `${BASE_URL}/sale/pay`,
         }
     },
 };

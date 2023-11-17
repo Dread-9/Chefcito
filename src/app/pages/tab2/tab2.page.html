@@ -1,5 +1,5 @@
 <ion-content [fullscreen]="true">
-  <ion-card class="ion-activatable" *ngIf="mostrarCarta && sharedDataService.getReservations()">
+  <ion-card class="ion-activatable" *ngIf="mostrarCarta">
     <ion-card-header>
       <ion-card-title class="ion-text-center">Reserva</ion-card-title>
     </ion-card-header>
@@ -8,13 +8,13 @@
         <ion-item>
           <ion-list lines="none" >
             <!-- <ion-label color="primary">Id: {{ saleId }}</ion-label> -->
-            <ion-label color="primary">Mesa reservada: {{ getTableNumber(sharedDataService.getReservations()?.table || '') }} </ion-label>
-            <ion-label color="primary">Capacidad: {{ getTableSize(sharedDataService.getReservations()?.table || '') }} personas</ion-label>
+            <!-- <ion-label color="primary">Mesa reservada: {{ getTableNumber(sharedDataService.getReservations()?.table || '') }} </ion-label>
+            <ion-label color="primary">Capacidad: {{ getTableSize(sharedDataService.getReservations()?.table || '') }} personas</ion-label> -->
             <ion-label *ngIf="user" color="primary"> Usuario: {{user.name}} {{user.lastName}}</ion-label>
-            <ion-label color="primary">Mesa Activa: <ion-icon [name]="sharedDataService.getReservations()?.active ? 'ellipse' : 'checkmark-circle'" [color]="sharedDataService.getReservations()?.active ? 'success' : 'danger'"></ion-icon></ion-label>
-            <ion-label color="primary">Fecha de reserva:{{fechaA}} </ion-label>
+            <!-- <ion-label color="primary">Mesa Activa: <ion-icon [name]="(sharedDataService.getReservations()?.active || false) ? 'ellipse' : 'checkmark-circle'" [color]="(sharedDataService.getReservations()?.active || false) ? 'success' : 'danger'"></ion-icon></ion-label> -->
+            <!-- <ion-label color="primary">Fecha de reserva:{{fechaA}} </ion-label> -->
           </ion-list>
-          <ion-icon name="trash-outline" slot="end" (click)="cancelReservation()" color="danger" style="margin-left: auto;"></ion-icon>
+          <!-- <ion-icon name="trash-outline" slot="end" (click)="cancelReservation()" color="danger" style="margin-left: auto;"></ion-icon> -->
         </ion-item>
       </ion-list>
     </ion-card-content>

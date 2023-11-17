@@ -61,7 +61,7 @@ export class FoodPage implements OnInit {
           handler: (data) => {
             const comentario = data.comentario || '';
             this.cartService.agregarAlCarrito(producto, comentario);
-            this.toastService.showToast('Producto agregado al carrito', 'success', 2000);
+            this.toastService.showToast(`Producto agregado al carrito: ${producto.name}`, 'success', 2000);
           },
         },
       ],
