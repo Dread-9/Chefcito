@@ -127,7 +127,8 @@ export class PayPage implements OnInit {
               this.toastService.showToast('No se encontró Id de venta', 'danger', 3000);
               return;
             }
-            this.orderService.pay(saleId, this.token).subscribe({
+            const tip = this.getPropina()
+            this.orderService.pay(saleId, this.token, { tip }).subscribe({
               next: (response) => {
                 this.generatePDF();
                 localStorage.removeItem('saleId');
