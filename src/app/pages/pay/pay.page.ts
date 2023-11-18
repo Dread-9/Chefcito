@@ -11,6 +11,7 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { UserService } from 'src/app/services/user.service';
+import jsPDF, { jsPDFAPI } from 'jspdf';
 
 (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
@@ -44,6 +45,7 @@ export class PayPage implements OnInit {
     this.sharedDataService.mostrarCarta$.subscribe((mostrarCarta) => {
       this.mostrarCarta = mostrarCarta;
     });
+
   }
 
   ngOnInit() {
@@ -131,6 +133,7 @@ export class PayPage implements OnInit {
             this.orderService.pay(saleId, this.token, { tip }).subscribe({
               next: (response) => {
                 this.generatePDF();
+                this.generarPDF();
                 localStorage.removeItem('saleId');
                 localStorage.removeItem('table');
                 localStorage.removeItem('active');
@@ -227,5 +230,68 @@ export class PayPage implements OnInit {
     });
     return productList;
   }
+  // downloadPDF(): void {
+  //   const documentDefinition: TDocumentDefinitions = {
+  //     pageSize: { width: 400, height: 800 },
+  //     pageMargins: [20, 20, 20, 20],
+  //     content: [
+  //       { text: 'Boleta de Compra', style: 'header' },
+  //       { text: 'Detalles de la orden:', style: 'subheader' },
+  //       { text: '------------------------------------', style: 'divider' },
+  //       // Aquí puedes agregar contenido adicional si es necesario
+  //       // También puedes llamar a this.generateProductList() si es necesario
+  //       // ... Otros elementos de contenido
+  //       { text: '¡Gracias por su compra!', style: 'footer' }
+  //     ],
+  //     styles: {
+  //       // ... Estilos definidos para el diseño de la boleta de compra
+  //     },
+  //   };
 
+  //   const pdfDocGenerator = pdfMake.createPdf(documentDefinition);
+
+  //   // Generar el PDF y abrirlo en una nueva ventana o pestaña
+  //   pdfDocGenerator.getBlob((blob: Blob) => {
+  //     const blobUrl = URL.createObjectURL(blob);
+  //     window.open(blobUrl, '_blank');
+  //   });
+  // }
+  generarPDF(): void {
+    const boleta = document.getElementById('boleta');
+
+    // Verificar si el elemento 'boleta' existe antes de continuar
+    if (boleta) {
+      // Eliminar el botón de 'Pagar' del HTML antes de generar el PDF
+      const botonesPagar = boleta.querySelectorAll('ion-button');
+      botonesPagar.forEach((boton) => {
+        boton.remove();
+      });
+
+      const boletaHTML = boleta.innerHTML;
+      const pdf = new jsPDF();
+
+      pdf.html(boletaHTML, {
+        callback: (pdf) => {
+          const imgData = 'path/a/tu/imagen.png';
+          pdf.addImage(imgData, 'PNG', 10, 10, 40, 40);
+
+          // Guardar el PDF en una variable de tipo Blob
+          const blob = pdf.output('blob');
+
+          // Crear una URL del Blob para abrir el PDF en una nueva ventana
+          const url = URL.createObjectURL(blob);
+
+          // Abrir el PDF en una nueva ventana
+          window.open(url, '_blank');
+
+          // Liberar la URL del Blob después de un tiempo
+          setTimeout(() => {
+            URL.revokeObjectURL(url);
+          }, 500);
+        }
+      });
+    } else {
+      console.error("Elemento 'boleta' no encontrado en el DOM");
+    }
+  }
 }

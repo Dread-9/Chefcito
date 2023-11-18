@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-list *ngIf="orders">
+  <ion-list *ngIf="orders"  id="boleta">
     <ion-item *ngFor="let order of orders">
       <ion-label>{{ order.food.name }}</ion-label>
       <ion-label color="primary">${{ order.food.price }} pesos</ion-label>
@@ -23,7 +23,7 @@
         <ion-item>
           <ion-thumbnail slot="start">
             <ion-avatar>
-              <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+              <img alt="Silhouette of a person's head" src="../../../assets/icon/favicon.png" />
             </ion-avatar>
           </ion-thumbnail>
           <p>Monto sugerido 10%</p>
