@@ -50,6 +50,12 @@ export class OrderPage implements OnInit {
     await this.order();
     this.typeOrder();
   }
+  async doRefresh(event: any) {
+    this.token = this.auth.getToken();
+    await this.order();
+    this.typeOrder();
+    event.target.complete();
+  }
   async order() {
     const saleId = localStorage.getItem('saleId');
     if (!saleId) {

@@ -37,6 +37,20 @@ export class FoodPage implements OnInit {
       this.units = data;
     });
   }
+
+  async doRefresh(event: any) {
+    console.log('Recargando...');
+    this.route.params.subscribe((params) => {
+      const foodId = params['foodId'];
+      this.foodService.getFoodDetailsById(foodId).subscribe((data: FoodDetails) => {
+        this.productDetails = data;
+      });
+    });
+    this.foodService.getMeasurement().subscribe((data: any) => {
+      this.units = data;
+    });
+    event.target.complete();
+  }
   async agregarAlCarrito(producto: Food) {
     const alert = await this.alertController.create({
       header: 'Confirmación',

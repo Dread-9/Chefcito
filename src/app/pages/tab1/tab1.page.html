@@ -11,7 +11,10 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content :fullscreen="true">
+<ion-content :fullscreen="true" (ionRefresh)="doRefresh($event)">
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-card>
     <ion-card-content>
       <ion-list class="border" lines="none">
@@ -19,7 +22,7 @@
           <ion-thumbnail slot="center">
             <ion-img></ion-img>
           </ion-thumbnail>
-          <ion-list lines="none">Escanea <ion-text class="color" [routerLink]="['/clientes/'+ token +'/qr']"> Aqui</ion-text> El codigo qr a la entrada del
+          <ion-list lines="none">Escanea <ion-text color="primary" [routerLink]="['/clientes/'+ token +'/qr']"> Aqui</ion-text> El codigo qr a la entrada del
             restaurant 
           </ion-list>
           <ion-icon color="primary" name="qr-code-outline" slot="end" ></ion-icon>
@@ -32,7 +35,7 @@
     <ion-card-content>
       <ion-list class="border" lines="none">
         <ion-item >
-          <ion-list lines="none">Revisa <ion-text class="color" [routerLink]="['/clientes/'+ token +'/tab2']"> Aqui</ion-text> Nuestro Menu
+          <ion-list lines="none">Revisa <ion-text color="primary" [routerLink]="['/clientes/'+ token +'/tab2']"> Aqui</ion-text> Nuestro Menu
           </ion-list>
           <ion-icon color="primary" name="receipt-outline" slot="end" ></ion-icon>          
         </ion-item>
@@ -40,9 +43,33 @@
     </ion-card-content>
     <ion-ripple-effect></ion-ripple-effect>
   </ion-card>
+  <ion-card *ngIf="orders && orders.length > 0">
+    <div class="logo-container">
+      <img class="logo" alt="Logo" src="../../../assets/icon/Logo.png" />
+    </div>
+    <ion-card-header>
+      <ion-card-title>Ordenes</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list *ngFor="let order of orders">
+        <ion-item>
+          <ion-thumbnail slot="start">
+            <img [src]="order.food.img" alt="{{ order.food.name }}" />
+          </ion-thumbnail>
+          <ion-label>
+            <h2>{{ order.food.name }}</h2>
+            <p>Comentario: {{ order.desc }}</p>
+            <ion-chip [color]="getStatusInfo(order.status).color">{{ getStatusInfo(order.status).name }}</ion-chip>
+            <p>Precio: ${{ order.food.price }} pesos</p>
+          </ion-label>
+          <ion-icon slot="end" name="arrow-forward-circle-outline" [color]="getStatusInfo(order.status).color" [routerLink]="['/clientes/'+ token +'/foodmodal'+'/order']"></ion-icon>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
   <ion-card class="ion-activatable">
     <ion-img></ion-img>
     <ion-ripple-effect></ion-ripple-effect>
   </ion-card>
-  <ion-title class="ion-text-center color">Espacio de Publicidad</ion-title>
+  <ion-title color="primary" class="ion-text-center">Espacio de Publicidad</ion-title>
 </ion-content>

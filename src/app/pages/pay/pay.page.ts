@@ -132,7 +132,10 @@ export class PayPage implements OnInit {
               next: (response) => {
                 this.generatePDF();
                 localStorage.removeItem('saleId');
+                localStorage.removeItem('table');
+                localStorage.removeItem('active');
                 sessionStorage.removeItem('saleId');
+                this.mostrarCarta = false;
                 // this.sharedDataService.setMostrarCarta(false);
                 this.router.navigate(['clientes', this.token, 'tab1']);
                 this.toastService.showToast('Se ha realizado el pago de manera exitosa', 'success', 3000);

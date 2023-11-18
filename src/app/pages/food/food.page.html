@@ -7,7 +7,10 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content (ionRefresh)="doRefresh($event)">
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-card class="custom-ion-card">
     <ion-img [src]="productDetails.food.img" alt="{{ productDetails.food.name }}"></ion-img>
     <ion-card-header>

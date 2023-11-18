@@ -35,6 +35,7 @@ export class QrPage implements OnInit {
   scanResultAvailable = false;
   scanResult: string | null = null;
   loading!: HTMLIonLoadingElement;
+  mostrarCarta: boolean = false;
 
   constructor(
     private auth: AuthService,
@@ -70,13 +71,21 @@ export class QrPage implements OnInit {
           map((response: any) => {
             const reservationData: Reservation = response.reservation;
             const saleData: Sale = response.sale;
+            const table = reservationData.table
+            const active = reservationData.active
             const saleId = saleData._id;
-            console.log('Request', saleId);
+            console.log('Request');
+            console.log(saleId);
+            console.log(table);
+            console.log(active);
+            this.mostrarCarta = true;
             // localStorage.setItem('reservationData', JSON.stringify(reservationData));
             // localStorage.setItem('saleData', JSON.stringify(saleData));
             // sessionStorage.setItem('reservationData', JSON.stringify(reservationData));
             // sessionStorage.setItem('saleData', JSON.stringify(saleData));
             localStorage.setItem('saleId', saleId);
+            localStorage.setItem('table', table);
+            localStorage.setItem('active', String(active));
             sessionStorage.setItem('saleId', saleId);
             // this.sharedDataService.setReservations(reservationData);
             // this.sharedDataService.setSales(saleData);

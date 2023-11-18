@@ -39,10 +39,13 @@ export class Tab2Page {
   tables!: any[];
   searchTerm: string = '';
   reservationId!: any;
-  mostrarCarta: boolean = true;
+  // mostrarCarta: boolean = true;
   saleId: string | null = null;
-  reservationData: Reservation = {} as Reservation;
-  saleData: Sale = {} as Sale;
+  active: string | null = null;
+  table: string | null = null;
+  mostrarCarta: boolean = false;
+  // reservationData: Reservation = {} as Reservation;
+  // saleData: Sale = {} as Sale;
 
   constructor(
     private toastService: ToastService,
@@ -63,30 +66,51 @@ export class Tab2Page {
     });
   }
   ngOnInit() {
-    const mostrarCartaStorage = localStorage.getItem('mostrarCarta');
-    const mostrarCartaSession = sessionStorage.getItem('mostrarCarta');
-    if (mostrarCartaStorage !== null) {
-      this.mostrarCarta = mostrarCartaStorage === 'true';
-    } else if (mostrarCartaSession !== null && mostrarCartaStorage === null) {
-      this.mostrarCarta = mostrarCartaSession === 'true';
-    }
+    // const mostrarCartaStorage = localStorage.getItem('mostrarCarta');
+    // const mostrarCartaSession = sessionStorage.getItem('mostrarCarta');
+    // if (mostrarCartaStorage !== null) {
+    //   this.mostrarCarta = mostrarCartaStorage === 'true';
+    // } else if (mostrarCartaSession !== null && mostrarCartaStorage === null) {
+    //   this.mostrarCarta = mostrarCartaSession === 'true';
+    // }
     this.typeFood();
     this.food();
     this.fecha();
     // this.route.queryParams.subscribe((params) => {
     //   this.reservationId = this.route.snapshot.queryParams['saleId'];
     // });
-    this.sharedDataService.mostrarCarta$.subscribe((mostrarCarta) => {
-      this.mostrarCarta = mostrarCarta;
-    });
+    // this.sharedDataService.mostrarCarta$.subscribe((mostrarCarta) => {
+    //   this.mostrarCarta = mostrarCarta;
+    // });
     this.user = this.userService.getUser();
     this.token = this.auth.getToken();
     this.carrito = this.cartService.obtenerCarrito();
     this.saleId = localStorage.getItem('saleId');
-    const storedReservationData = JSON.parse(localStorage.getItem('reservationData') || '{}') as Reservation;
-    const storedSaleData = JSON.parse(localStorage.getItem('saleData') || '{}') as Sale;
-    this.reservationData = storedReservationData;
-    this.saleData = storedSaleData;
+    this.table = localStorage.getItem('table');
+    this.active = localStorage.getItem('active');
+    if (this.saleId && this.table && this.active) {
+      this.mostrarCarta = true;
+    }
+    // const storedReservationData = JSON.parse(localStorage.getItem('reservationData') || '{}') as Reservation;
+    // const storedSaleData = JSON.parse(localStorage.getItem('saleData') || '{}') as Sale;
+    // this.reservationData = storedReservationData;
+    // this.saleData = storedSaleData;
+  }
+  async doRefresh(event: any) {
+    console.log('Recargando...');
+    this.typeFood();
+    this.food();
+    this.fecha();
+    this.user = this.userService.getUser();
+    this.token = this.auth.getToken();
+    this.carrito = this.cartService.obtenerCarrito();
+    this.saleId = localStorage.getItem('saleId');
+    this.table = localStorage.getItem('table');
+    this.active = localStorage.getItem('active');
+    if (this.saleId && this.table && this.active) {
+      this.mostrarCarta = true;
+    }
+    event.target.complete();
   }
   filterFoodsByName(foods: Food[], searchTerm: string): Food[] {
     if (!searchTerm) {
@@ -96,17 +120,17 @@ export class Tab2Page {
     return foods.filter(food => food.name.toLowerCase().includes(searchTerm));
   }
 
-  // getTableNumber(tableId: string): string {
-  //   const storedTables = JSON.parse(localStorage.getItem('tables') || '[]');
-  //   const table = storedTables.find((table: any) => table._id === tableId);
-  //   return table ? table.num.toString() : 'No encontrado';
-  // }
+  getTableNumber(tableId: string): string {
+    const storedTables = JSON.parse(localStorage.getItem('tables') || '[]');
+    const table = storedTables.find((table: any) => table._id === tableId);
+    return table ? table.num.toString() : 'No encontrado';
+  }
 
-  // getTableSize(tableId: string): string {
-  //   const storedTables = JSON.parse(localStorage.getItem('tables') || '[]');
-  //   const table = storedTables.find((table: any) => table._id === tableId);
-  //   return table ? table.size.toString() : 'No encontrado';
-  // }
+  getTableSize(tableId: string): string {
+    const storedTables = JSON.parse(localStorage.getItem('tables') || '[]');
+    const table = storedTables.find((table: any) => table._id === tableId);
+    return table ? table.size.toString() : 'No encontrado';
+  }
 
   async cancelReservation() {
     const alert = await this.alertController.create({
@@ -130,16 +154,19 @@ export class Tab2Page {
             }
             this.sharedDataService.DeleteReservation(saleId, this.token).subscribe({
               next: (response) => {
-                this.sharedDataService.setMostrarCarta(false);
+                // this.sharedDataService.setMostrarCarta(false);
                 localStorage.removeItem('saleId');
+                localStorage.removeItem('table');
+                localStorage.removeItem('active');
                 sessionStorage.removeItem('saleId');
+                this.mostrarCarta = false;
                 this.router.navigate(['clientes', this.token, 'tab1']);
-                // this.toastService.showToast(`Se ha cancelado la Reseva de la mesa: ${this.getTableNumber(this.sharedDataService.getReservations()?.table || '')}`, 'success', 3000);
-                // this.localNotificationsService.scheduleNotification(
-                //   'Reserva',
-                //   `Se ha cancelado la Reseva de la mesa: ${this.getTableNumber(this.sharedDataService.getReservations()?.table || '')}`,
-                //   new Date(new Date().getTime() + 3000)
-                // );
+                this.toastService.showToast(`Se ha cancelado la Reseva de la mesa: `, 'success', 3000);
+                this.localNotificationsService.scheduleNotification(
+                  'Reserva',
+                  `Se ha cancelado la Reseva de la mesa: `,
+                  new Date(new Date().getTime() + 3000)
+                );
               },
               error: (error) => {
                 const errorData = error.error;

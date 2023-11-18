@@ -7,7 +7,10 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" (ionRefresh)="doRefresh($event)">
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-card *ngIf="orders">
     <ion-card-content>
       <ion-list *ngFor="let order of orders">
