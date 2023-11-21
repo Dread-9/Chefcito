@@ -7,8 +7,8 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-list *ngIf="orders"  id="boleta">
+<ion-content [fullscreen]="true" >
+  <ion-list *ngIf="orders" >
     <ion-item *ngFor="let order of orders">
       <ion-label>{{ order.food.name }}</ion-label>
       <ion-label color="primary">${{ order.food.price }} pesos</ion-label>
@@ -27,6 +27,9 @@
             </ion-avatar>
           </ion-thumbnail>
           <p>Monto sugerido 10%</p>
+        </ion-item>
+        <ion-item>
+          <p>Monto sugerido: {{ getPropinaSugerida() }} </p>
         </ion-item>
         <ion-item>
           <ion-input label="Propina" type="number" placeholder="1000" placeholder="Ingresa monto de propina" [(ngModel)]="propinaIngresada"></ion-input>

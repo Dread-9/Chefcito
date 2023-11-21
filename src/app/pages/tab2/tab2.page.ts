@@ -66,22 +66,9 @@ export class Tab2Page {
     });
   }
   ngOnInit() {
-    // const mostrarCartaStorage = localStorage.getItem('mostrarCarta');
-    // const mostrarCartaSession = sessionStorage.getItem('mostrarCarta');
-    // if (mostrarCartaStorage !== null) {
-    //   this.mostrarCarta = mostrarCartaStorage === 'true';
-    // } else if (mostrarCartaSession !== null && mostrarCartaStorage === null) {
-    //   this.mostrarCarta = mostrarCartaSession === 'true';
-    // }
     this.typeFood();
     this.food();
     this.fecha();
-    // this.route.queryParams.subscribe((params) => {
-    //   this.reservationId = this.route.snapshot.queryParams['saleId'];
-    // });
-    // this.sharedDataService.mostrarCarta$.subscribe((mostrarCarta) => {
-    //   this.mostrarCarta = mostrarCarta;
-    // });
     this.user = this.userService.getUser();
     this.token = this.auth.getToken();
     this.carrito = this.cartService.obtenerCarrito();
@@ -91,10 +78,6 @@ export class Tab2Page {
     if (this.saleId && this.table && this.active) {
       this.mostrarCarta = true;
     }
-    // const storedReservationData = JSON.parse(localStorage.getItem('reservationData') || '{}') as Reservation;
-    // const storedSaleData = JSON.parse(localStorage.getItem('saleData') || '{}') as Sale;
-    // this.reservationData = storedReservationData;
-    // this.saleData = storedSaleData;
   }
   async doRefresh(event: any) {
     console.log('Recargando...');
@@ -120,17 +103,17 @@ export class Tab2Page {
     return foods.filter(food => food.name.toLowerCase().includes(searchTerm));
   }
 
-  getTableNumber(tableId: string): string {
-    const storedTables = JSON.parse(localStorage.getItem('tables') || '[]');
-    const table = storedTables.find((table: any) => table._id === tableId);
-    return table ? table.num.toString() : 'No encontrado';
-  }
+  // getTableNumber(tableId: string): string {
+  //   const storedTables = JSON.parse(localStorage.getItem('tables') || '[]');
+  //   const table = storedTables.find((table: any) => table._id === tableId);
+  //   return table ? table.num.toString() : 'No encontrado';
+  // }
 
-  getTableSize(tableId: string): string {
-    const storedTables = JSON.parse(localStorage.getItem('tables') || '[]');
-    const table = storedTables.find((table: any) => table._id === tableId);
-    return table ? table.size.toString() : 'No encontrado';
-  }
+  // getTableSize(tableId: string): string {
+  //   const storedTables = JSON.parse(localStorage.getItem('tables') || '[]');
+  //   const table = storedTables.find((table: any) => table._id === tableId);
+  //   return table ? table.size.toString() : 'No encontrado';
+  // }
 
   async cancelReservation() {
     const alert = await this.alertController.create({

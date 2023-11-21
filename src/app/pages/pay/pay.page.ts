@@ -12,6 +12,8 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { UserService } from 'src/app/services/user.service';
 import jsPDF, { jsPDFAPI } from 'jspdf';
+import { ModalController } from '@ionic/angular';
+import { PopoverComponent } from 'src/app/componets/popover/popover.component';
 
 (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
@@ -29,6 +31,8 @@ export class PayPage implements OnInit {
   user: any;
   userEmail!: string;
   mostrarCarta: boolean = false;
+  showContent: boolean = true;
+  showPaymentElement: boolean = false;
   constructor(
     private toastService: ToastService,
     private auth: AuthService,
@@ -39,6 +43,7 @@ export class PayPage implements OnInit {
     private orderService: OrderService,
     sharedDataService: SharedService,
     private userService: UserService,
+    private modalController: ModalController
   ) {
     this.sharedDataService = sharedDataService;
     this.saleId = localStorage.getItem('saleId');
@@ -82,6 +87,10 @@ export class PayPage implements OnInit {
     const iva = totalProductos * 0.19;
     return iva;
   }
+  getPropinaSugerida(): number {
+    const totalProductos = this.getTotal();
+    return totalProductos * 0.1;
+  }
 
   getPropina(): number {
     const totalProductos = this.getTotal();
@@ -105,6 +114,10 @@ export class PayPage implements OnInit {
     return totalPagar;
   }
   async pago() {
+    const modal = await this.modalController.create({
+      component: PopoverComponent,
+      cssClass: 'tu-modal-css' // Clase CSS para estilizar tu modal
+    });
     const loading = await this.loadingController.create({
       message: 'Generando Pago...',
       duration: 3000
@@ -123,7 +136,7 @@ export class PayPage implements OnInit {
         {
           text: 'Pagar',
           handler: async () => {
-            loading.present();
+            await modal.present();
             const saleId = localStorage.getItem('saleId');
             if (!saleId) {
               this.toastService.showToast('No se encontró Id de venta', 'danger', 3000);
@@ -132,21 +145,23 @@ export class PayPage implements OnInit {
             const tip = this.getPropina()
             this.orderService.pay(saleId, this.token, { tip }).subscribe({
               next: (response) => {
-                this.generatePDF();
-                this.generarPDF();
                 localStorage.removeItem('saleId');
                 localStorage.removeItem('table');
                 localStorage.removeItem('active');
                 sessionStorage.removeItem('saleId');
                 this.mostrarCarta = false;
-                // this.sharedDataService.setMostrarCarta(false);
-                this.router.navigate(['clientes', this.token, 'tab1']);
-                this.toastService.showToast('Se ha realizado el pago de manera exitosa', 'success', 3000);
-                this.localNotificationsService.scheduleNotification(
-                  'Pago de orden',
-                  `Se ha realizado el pago de manera exitosa`,
-                  new Date(new Date().getTime() + 3000)
-                );
+                setTimeout(() => {
+                  loading.present();
+                  this.router.navigate(['clientes', this.token, 'tab1']);
+                  this.generatePDF();
+                  this.toastService.showToast('Se ha realizado el pago de manera exitosa', 'success', 3000);
+                  this.localNotificationsService.scheduleNotification(
+                    'Pago de orden',
+                    `Se ha realizado el pago de manera exitosa`,
+                    new Date(new Date().getTime() + 3000)
+                  );
+                  modal.dismiss();
+                }, 10000);
               },
               error: (error) => {
                 const errorData = error.error;
@@ -159,39 +174,6 @@ export class PayPage implements OnInit {
     });
     await alert.present();
   }
-
-
-  // generatePDF(): void {
-  //   const documentDefinition: TDocumentDefinitions = {
-  //     content: [
-  //       { text: 'Boleta de Compra', style: 'header' },
-  //       { text: 'Detalles de la orden:', style: 'subheader' },
-  //       this.generateProductList(),
-  //       { text: `Total a pagar: $${this.getTotalAPagar()} pesos`, style: 'total' },
-  //       { text: `Iva: $${this.getIva()} pesos`, style: 'details' },
-  //       { text: `Propina: $${this.getPropina()} pesos`, style: 'details' },
-  //       { text: '¡Gracias por su compra!', style: 'footer' }
-  //     ],
-  //     styles: {
-  //       header: { fontSize: 22, bold: true, alignment: 'center', margin: [0, 0, 0, 15] },
-  //       subheader: { fontSize: 18, bold: true, margin: [0, 15, 0, 5] },
-  //       total: { fontSize: 16, bold: true, margin: [0, 15, 0, 15] },
-  //       details: { fontSize: 14, margin: [0, 5, 0, 5] },
-  //       footer: { fontSize: 14, bold: true, alignment: 'center', margin: [0, 15, 0, 0] },
-  //     },
-  //   };
-  //   const pdfDocGenerator = pdfMake.createPdf(documentDefinition);
-  //   pdfDocGenerator.download('boleta_de_compra.pdf');
-  // }
-  // generateProductList(): any[] {
-  //   const productList = this.orders.map(order => {
-  //     return [
-  //       { text: order.food.name, style: 'product' },
-  //       { text: `$${order.food.price} pesos`, style: 'price' },
-  //     ];
-  //   });
-  //   return productList;
-  // }
   generatePDF(): void {
     const documentDefinition: TDocumentDefinitions = {
       pageSize: { width: 400, height: 800 }, // Tamaño de la hoja más larga
@@ -209,6 +191,7 @@ export class PayPage implements OnInit {
         { text: '¡Gracias por su compra!', style: 'footer' }
       ],
       styles: {
+        logo: { alignment: 'center', margin: [0, 10, 0, 20] },
         header: { fontSize: 14, bold: true, alignment: 'center', margin: [0, 0, 0, 10] },
         subheader: { fontSize: 10, bold: true, margin: [0, 10, 0, 5] },
         divider: { margin: [0, 5, 0, 5], alignment: 'center' },
@@ -229,69 +212,5 @@ export class PayPage implements OnInit {
       ];
     });
     return productList;
-  }
-  // downloadPDF(): void {
-  //   const documentDefinition: TDocumentDefinitions = {
-  //     pageSize: { width: 400, height: 800 },
-  //     pageMargins: [20, 20, 20, 20],
-  //     content: [
-  //       { text: 'Boleta de Compra', style: 'header' },
-  //       { text: 'Detalles de la orden:', style: 'subheader' },
-  //       { text: '------------------------------------', style: 'divider' },
-  //       // Aquí puedes agregar contenido adicional si es necesario
-  //       // También puedes llamar a this.generateProductList() si es necesario
-  //       // ... Otros elementos de contenido
-  //       { text: '¡Gracias por su compra!', style: 'footer' }
-  //     ],
-  //     styles: {
-  //       // ... Estilos definidos para el diseño de la boleta de compra
-  //     },
-  //   };
-
-  //   const pdfDocGenerator = pdfMake.createPdf(documentDefinition);
-
-  //   // Generar el PDF y abrirlo en una nueva ventana o pestaña
-  //   pdfDocGenerator.getBlob((blob: Blob) => {
-  //     const blobUrl = URL.createObjectURL(blob);
-  //     window.open(blobUrl, '_blank');
-  //   });
-  // }
-  generarPDF(): void {
-    const boleta = document.getElementById('boleta');
-
-    // Verificar si el elemento 'boleta' existe antes de continuar
-    if (boleta) {
-      // Eliminar el botón de 'Pagar' del HTML antes de generar el PDF
-      const botonesPagar = boleta.querySelectorAll('ion-button');
-      botonesPagar.forEach((boton) => {
-        boton.remove();
-      });
-
-      const boletaHTML = boleta.innerHTML;
-      const pdf = new jsPDF();
-
-      pdf.html(boletaHTML, {
-        callback: (pdf) => {
-          const imgData = 'path/a/tu/imagen.png';
-          pdf.addImage(imgData, 'PNG', 10, 10, 40, 40);
-
-          // Guardar el PDF en una variable de tipo Blob
-          const blob = pdf.output('blob');
-
-          // Crear una URL del Blob para abrir el PDF en una nueva ventana
-          const url = URL.createObjectURL(blob);
-
-          // Abrir el PDF en una nueva ventana
-          window.open(url, '_blank');
-
-          // Liberar la URL del Blob después de un tiempo
-          setTimeout(() => {
-            URL.revokeObjectURL(url);
-          }, 500);
-        }
-      });
-    } else {
-      console.error("Elemento 'boleta' no encontrado en el DOM");
-    }
   }
 }

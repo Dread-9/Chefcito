@@ -68,6 +68,7 @@ export class SignupPage implements OnInit {
         if (response.ok) {
           const responseData = await response.json();
           const userId = responseData._id;
+          console.log(userId)
           this.auth.signup(requestData);
           const alert = await this.alertController.create({
             header: 'Mensaje informativo',

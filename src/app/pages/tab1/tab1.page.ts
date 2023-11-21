@@ -47,6 +47,8 @@ export class Tab1Page implements OnInit {
     this.user = this.userService.getUser();
     this.saleId = localStorage.getItem('saleId');
     event.target.complete();
+    this.getStatusInfo('651b3f82faa294650dc1ec28');
+    this.getStatusName('Orden lista');
   }
 
   ionViewWillEnter() {
@@ -65,9 +67,9 @@ export class Tab1Page implements OnInit {
         next: (response) => {
           console.log(response);
           this.orders = response as Order[];
-          if (this.allOrdersDelivered()) {
-            this.toastService.showToast('¡Puedes pagar la orden!', 'success', 3000);
-          }
+          // if (this.allOrdersDelivered()) {
+          //   this.toastService.showToast('¡Puedes pagar la orden!', 'success', 3000);
+          // }
         },
         error: (error) => {
           const errorData = error.error;

@@ -26,6 +26,26 @@
     </ion-card-content>
     <ion-ripple-effect></ion-ripple-effect>
   </ion-card>
+    <div class="button-container">
+    <ion-button fill="outline" (click)="person()">
+      <ion-icon name="person-circle-outline" aria-hidden="true"></ion-icon>
+    </ion-button>
+    <ion-button fill="outline" (click)="wallet()">
+      <ion-icon name="wallet-outline"></ion-icon>
+    </ion-button>
+    <ion-button fill="outline" (click)="settings()">
+      <ion-icon name="settings-outline"></ion-icon>
+    </ion-button>
+    <ion-button fill="outline" (click)="onLogoutClick()">
+      <ion-icon name="log-out-outline"></ion-icon>
+    </ion-button>
+  </div>
+  <ion-card class="ion-activatable" *ngIf="user && !user.verified">
+    <ion-card-content class="custom-card-content">
+      <ion-button (click)="verify()">Verificar Usuario</ion-button>
+    </ion-card-content>
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-card>
   <ion-card class="ion-activatable" >
     <ion-card-content>
       <ion-list class="border" lines="none">
@@ -36,18 +56,21 @@
     </ion-card-content>
     <ion-ripple-effect></ion-ripple-effect>
   </ion-card>
-  <div class="button-container">
-    <ion-button fill="outline">
-      <ion-icon name="person-circle-outline" aria-hidden="true"></ion-icon>
-    </ion-button>
-    <ion-button fill="outline">
-      <ion-icon name="wallet-outline"></ion-icon>
-    </ion-button>
-    <ion-button fill="outline">
-      <ion-icon name="settings-outline"></ion-icon>
-    </ion-button>
-    <ion-button fill="outline" (click)="onLogoutClick()">
-      <ion-icon name="log-out-outline"></ion-icon>
-    </ion-button>
-  </div>
+  <ion-card class="ion-activatable">
+    <ion-card-content class="custom-card-content">
+      <div class="card2">
+        <span class="logo">
+          <ion-avatar>
+            <img alt="Silhouette of a person's head" src="../../../assets/icon/favicon.png" />
+          </ion-avatar>
+        </span>
+        <span class="remove">
+          <ion-icon name="trash-outline" slot="end" >
+          </ion-icon></span>
+        <span class="number">**** **** **** 1320</span>
+        <span class="owner"><ion-label> {{user.name}} {{user.lastName}} </ion-label></span>
+      </div>
+    </ion-card-content>
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-card>
 </ion-content>
