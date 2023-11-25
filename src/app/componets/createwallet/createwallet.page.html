@@ -1,0 +1,101 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title class="ion-text-center">Crear Tarjeta de Pago</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarModal()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <div class="card-container">
+        <div class="front">
+            <div class="image">
+                <img src="../../../assets/img/chip.png" alt="">
+                <img src="../../../assets/img/visa.png" alt="">
+            </div>
+            <div class="card-number-box">####-####-####-####</div>
+            <div class="flexbox">
+                <div class="box">
+                    <span>Titular de la tarjeta</span>
+                    <div class="card-holder-name">Nombre Completo</div>
+                </div>
+                <div class="box">
+                    <span>Fecha de Expiracion</span>
+                    <div class="expiration">
+                        <span class="exp-month">MM/</span>
+                        <span class="exp-year">YY</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="back">
+            <div class="stripe"></div>
+            <div class="box">
+                <span>CVV</span>
+                <div class="cvv-box"></div>
+                <img src="../../../assets/img/visa.png" alt="">
+            </div>
+        </div>
+    </div>
+    <form [formGroup]="paymentForm" (ngSubmit)="crearTarjeta()">
+        <div class="inputBox">
+            <span>Número de tarjeta</span>
+            <input type="text" maxlength="16" class="card-number-input" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 16);" formControlName="cardNumber">
+            <span *ngIf="paymentForm.get('cardNumber')?.invalid && (paymentForm.get('cardNumber')?.dirty || paymentForm.get('cardNumber')?.touched)" style="color: red;">¡Debe ingresar un número de tarjeta válido!</span>
+        </div>          
+        <div class="inputBox">
+            <span>Nombre del Titular</span>
+            <input type="text" maxlength="28" class="card-holder-input" formControlName="cardHolder">
+            <span *ngIf="paymentForm.get('cardHolder')?.invalid && (paymentForm.get('cardHolder')?.dirty || paymentForm.get('cardHolder')?.touched)" style="color: red;">¡Debe ingresar un nombre válido!</span>
+          </div>
+        <div class="flexbox">
+            <div class="inputBox">
+            <span>MM</span>
+            <select class="month-input" formControlName="expirationMonth">
+              <option value="month" selected disabled>Mes</option>
+              <option value="01">01</option>
+              <option value="02">02</option>
+              <option value="03">03</option>
+              <option value="04">04</option>
+              <option value="05">05</option>
+              <option value="06">06</option>
+              <option value="07">07</option>
+              <option value="08">08</option>
+              <option value="09">09</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+            </select>
+            <span *ngIf="paymentForm.get('expirationMonth')?.invalid && (paymentForm.get('expirationMonth')?.dirty || paymentForm.get('expirationMonth')?.touched)" style="color: red;">¡Seleccione un mes!</span>
+          </div>
+          <div class="inputBox">
+            <span>YY</span>
+            <select name="" id="" class="year-input" formControlName="expirationYear">
+              <option value="year" selected disabled>Año</option>
+              <option value="2021">2021</option>
+              <option value="2022">2022</option>
+              <option value="2023">2023</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+              <option value="2029">2029</option>
+              <option value="2030">2030</option>
+            </select>
+            <span *ngIf="paymentForm.get('expirationYear')?.invalid && (paymentForm.get('expirationYear')?.dirty || paymentForm.get('expirationYear')?.touched)" style="color: red;">¡Seleccione un año!</span>
+          </div>
+          <div class="inputBox" (click)="flipCard()">
+            <span>CVV</span>
+            <input type="text" maxlength="3" class="cvv-input" formControlName="cvv">
+            <span *ngIf="paymentForm.get('cvv')?.invalid && (paymentForm.get('cvv')?.dirty || paymentForm.get('cvv')?.touched)" style="color: red;">¡Debe ingresar un CVV válido!</span>
+          </div>
+        </div>
+        <ion-button class="submit-btn" expand="block" type="submit" [disabled]="paymentForm.invalid">Crear Tarjeta</ion-button>
+    </form>
+  </div>
+</ion-content>

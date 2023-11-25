@@ -43,6 +43,13 @@
     </ion-card-content>
     <ion-ripple-effect></ion-ripple-effect>
   </ion-card>
+  <!-- <swiper-container (slidechange)="swiperSlideChange($event)" [loop]="true" [pagination]="true">
+    <swiper-slide *ngFor="let foodType of foodTypes">
+      <ion-card (click)="navigateToSegment(foodType._id)">
+        <ion-img src="" style="height: 270px; border-radius: 1rem !important;"></ion-img>
+      </ion-card>
+    </swiper-slide>
+  </swiper-container> -->
   <ion-card *ngIf="orders && orders.length > 0">
     <div class="logo-container">
       <img class="logo" alt="Logo" src="../../../assets/icon/favicon.png" />
@@ -67,9 +74,4 @@
       </ion-list>
     </ion-card-content>
   </ion-card>
-  <ion-card class="ion-activatable">
-    <ion-img></ion-img>
-    <ion-ripple-effect></ion-ripple-effect>
-  </ion-card>
-  <ion-title color="primary" class="ion-text-center">Espacio de Publicidad</ion-title> 
 </ion-content>

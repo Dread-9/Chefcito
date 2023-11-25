@@ -1,0 +1,113 @@
+.icon-image {
+    margin-left: 60px;
+    height: 52px;
+    margin-left: 10px;
+}
+
+.border {
+    border-style: none !important;
+}
+
+ion-button {
+    margin-bottom: 10px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+}
+
+.ios body {
+    --ion-background-color: #f2f2f6;
+    --ion-toolbar-background: var(--ion-background-color);
+    --ion-item-background: #fff;
+}
+
+/* This sets a different background and item background in light mode on md */
+.md body {
+    --ion-background-color: #f9f9f9;
+    --ion-toolbar-background: var(--ion-background-color);
+    --ion-item-background: #fff;
+}
+
+/* This is added for the flashing that happens when toggling between themes */
+ion-item {
+    --transition: none;
+}
+
+.custom-card-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo svg {
+    height: 48px;
+    width: 54px;
+}
+
+::selection {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.card2 {
+    background: radial-gradient(circle, white 0%, #7E8513 100%);
+    width: 300px;
+    height: 200px;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 3px 3px 17px 0px rgba(0, 0, 0, 0.55);
+}
+
+.card2 .remove,
+.card2 .logo {
+    position: absolute;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.card2 .remove {
+    top: 30px;
+    right: 30px;
+    opacity: .9;
+    color: black;
+}
+
+.card2 .remove:hover {
+    color: #f06b5d;
+}
+
+.card2 .logo {
+    top: 20px;
+    left: 30px;
+    font-size: 3em;
+    opacity: 1;
+}
+
+.card2 .number,
+.card2 .owner {
+    display: block;
+    position: absolute;
+    left: 30px;
+    cursor: default;
+    color: black;
+    opacity: .9;
+    transition: color .7s ease-out;
+}
+
+.card2 .number {
+    bottom: 60px;
+    letter-spacing: 4px;
+}
+
+.card2 .owner {
+    bottom: 30px;
+    letter-spacing: 1px;
+}

@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title class="ion-text-center">Añadir Tarjeta de Pago</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarModal()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <ng-container *ngIf="card; else noCard">
+    <ion-card class="ion-activatable">
+      <ion-card-content class="custom-card-content">
+        <div class="card2">
+          <span class="logo">
+            <ion-avatar>
+              <img alt="Silhouette of a person's head" src="../../../assets/icon/favicon.png" />
+            </ion-avatar>
+          </span>
+          <span class="remove">
+            <ion-icon name="trash-outline" slot="end" (click)="deleteCardData()"></ion-icon>
+          </span>
+          <span class="number">**** **** **** {{ card.pan.slice(-4) }}</span>
+          <span class="owner">
+            <ion-label>{{ card.name }}</ion-label>
+          </span>
+        </div>
+      </ion-card-content>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-card>
+  </ng-container>
+  <ng-template #noCard>
+    <ion-card color="secondary">
+      <ion-card-header>
+        <ion-card-title>No hay tarjetas disponibles</ion-card-title>
+      </ion-card-header>
+    </ion-card>
+  </ng-template>
+  <ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="abrirModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+

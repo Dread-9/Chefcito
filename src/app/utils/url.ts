@@ -15,6 +15,13 @@ export const url = {
             ingredientes: `${BASE_URL}/ingredient/stock`,//pendiente
         }
     },
+    urlCard: {
+        card: {
+            createCard: `${BASE_URL}/card`,
+            deleteCard: `${BASE_URL}/card`,
+            getCard: `${BASE_URL}/card`,
+        }
+    },
     urlReservation: {
         reservations: {
             reservation: `${BASE_URL}/reservation`,

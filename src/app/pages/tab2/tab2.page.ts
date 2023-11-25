@@ -20,7 +20,6 @@ import { LocalNotificationsService } from '../../services/local-notifications.se
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page {
-  // botonCarritoModalDeshabilitado: boolean = true;
   carrito: { product: Food; quantity: number }[] = [];
   detalleDelProducto: Food | null = null;
   token: any;
@@ -28,7 +27,6 @@ export class Tab2Page {
   foodTypes!: FoodType[];
   Food!: Food[];
   foodsByType: { [key: string]: any[] } = {};
-  // modalButtonDisabled: boolean = true;
   fechaA!: string;
   reservations!: Reservation;
   sales!: Sale;
@@ -39,13 +37,14 @@ export class Tab2Page {
   tables!: any[];
   searchTerm: string = '';
   reservationId!: any;
-  // mostrarCarta: boolean = true;
   saleId: string | null = null;
   active: string | null = null;
   table: string | null = null;
   mostrarCarta: boolean = false;
-  // reservationData: Reservation = {} as Reservation;
-  // saleData: Sale = {} as Sale;
+  slideOpts = {
+    initialSlide: 1,
+    speed: 400,
+  };
 
   constructor(
     private toastService: ToastService,
@@ -102,18 +101,6 @@ export class Tab2Page {
     searchTerm = searchTerm.toLowerCase();
     return foods.filter(food => food.name.toLowerCase().includes(searchTerm));
   }
-
-  // getTableNumber(tableId: string): string {
-  //   const storedTables = JSON.parse(localStorage.getItem('tables') || '[]');
-  //   const table = storedTables.find((table: any) => table._id === tableId);
-  //   return table ? table.num.toString() : 'No encontrado';
-  // }
-
-  // getTableSize(tableId: string): string {
-  //   const storedTables = JSON.parse(localStorage.getItem('tables') || '[]');
-  //   const table = storedTables.find((table: any) => table._id === tableId);
-  //   return table ? table.size.toString() : 'No encontrado';
-  // }
 
   async cancelReservation() {
     const alert = await this.alertController.create({
@@ -267,5 +254,4 @@ export class Tab2Page {
     });
     await alert.present();
   }
-
 } 

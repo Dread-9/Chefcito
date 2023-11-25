@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Configuraciones</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarModal()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <ion-card class="ion-activatable" >
+    <ion-card-content>
+      <ion-list class="border" lines="none">
+        <ion-item>
+          <ion-toggle mode="ios" [checked]="darkMode" (ionChange)="toggleDarkMode()" justify="space-between">Modo Oscuro</ion-toggle>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-card>
+  <ion-card class="ion-activatable">
+    <ion-card-content class="custom-card-content">
+      <ion-button (click)="verify()">Verificar Usuario</ion-button>
+    </ion-card-content>
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-card>
+</ion-content>
