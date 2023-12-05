@@ -7,6 +7,7 @@ import { FoodService } from '../../services/food.service';
 import { ToastService } from '../../services/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Reservation, Sale } from '../../models/interfaceReservation';
+import { Tables } from '../../models/InterfaceTable';
 import { UserService } from '../../services/user.service';
 import { SharedService } from '../../services/shared.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -40,11 +41,13 @@ export class Tab2Page {
   saleId: string | null = null;
   active: string | null = null;
   table: string | null = null;
+  Tables!: Tables[];
   mostrarCarta: boolean = false;
   slideOpts = {
     initialSlide: 1,
     speed: 400,
   };
+  mesaEncontrada!: Tables
 
   constructor(
     private toastService: ToastService,
@@ -60,9 +63,31 @@ export class Tab2Page {
     private localNotificationsService: LocalNotificationsService
   ) {
     this.sharedDataService = sharedDataService;
+    this.sharedDataService.getTabla().subscribe((data: Tables[]) => {
+      this.Tables = data;
+      console.log('Tables', this.Tables);
+      this.buscarMesaPorReserva(this.reservationId);
+    });
+  }
+  async doRefresh(event: any) {
     this.sharedDataService.getTabla().subscribe((data: any[]) => {
       this.tables = data;
     });
+    this.sharedDataService = this.sharedDataService;
+    this.typeFood();
+    this.food();
+    this.fecha();
+    this.user = this.userService.getUser();
+    this.token = this.auth.getToken();
+    this.carrito = this.cartService.obtenerCarrito();
+    this.saleId = localStorage.getItem('saleId');
+    this.table = localStorage.getItem('table');
+    this.active = localStorage.getItem('active');
+    if (this.saleId && this.table && this.active) {
+      this.mostrarCarta = true;
+    }
+    event.target.complete();
+    this.buscarMesaPorReserva(this.reservationId);
   }
   ngOnInit() {
     this.typeFood();
@@ -77,22 +102,7 @@ export class Tab2Page {
     if (this.saleId && this.table && this.active) {
       this.mostrarCarta = true;
     }
-  }
-  async doRefresh(event: any) {
-    console.log('Recargando...');
-    this.typeFood();
-    this.food();
-    this.fecha();
-    this.user = this.userService.getUser();
-    this.token = this.auth.getToken();
-    this.carrito = this.cartService.obtenerCarrito();
-    this.saleId = localStorage.getItem('saleId');
-    this.table = localStorage.getItem('table');
-    this.active = localStorage.getItem('active');
-    if (this.saleId && this.table && this.active) {
-      this.mostrarCarta = true;
-    }
-    event.target.complete();
+    this.buscarMesaPorReserva(this.reservationId);
   }
   filterFoodsByName(foods: Food[], searchTerm: string): Food[] {
     if (!searchTerm) {
@@ -101,7 +111,14 @@ export class Tab2Page {
     searchTerm = searchTerm.toLowerCase();
     return foods.filter(food => food.name.toLowerCase().includes(searchTerm));
   }
-
+  buscarMesaPorReserva(reservationId: string): void {
+    const foundTable = this.Tables.find(table => table.id === reservationId);
+    if (foundTable) {
+      this.mesaEncontrada = foundTable;
+    } else {
+      console.log('No se encontró la mesa correspondiente a la reserva con el ID proporcionado.');
+    }
+  }
   async cancelReservation() {
     const alert = await this.alertController.create({
       header: '¿Estás seguro de cancelar tu reserva?',
@@ -124,7 +141,6 @@ export class Tab2Page {
             }
             this.sharedDataService.DeleteReservation(saleId, this.token).subscribe({
               next: (response) => {
-                // this.sharedDataService.setMostrarCarta(false);
                 localStorage.removeItem('saleId');
                 localStorage.removeItem('table');
                 localStorage.removeItem('active');
@@ -204,6 +220,7 @@ export class Tab2Page {
     const alert = await this.alertController.create({
       header: 'Confirmación',
       message: `¿Deseas agregar "${producto.name}" al carrito?`,
+      mode: 'ios',
       inputs: [
         {
           name: 'comentario',

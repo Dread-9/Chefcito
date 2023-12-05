@@ -6,13 +6,13 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 })
 export class LocalNotificationsService {
 
-  private lastNotificationId = 1; // Inicializa con el valor 1
+  private lastNotificationId = 1;
 
   constructor() { }
 
   async scheduleNotification(title: string, body: string, schedule: Date) {
     const id = this.lastNotificationId;
-    this.lastNotificationId++; // Incrementa el ID para la próxima notificación
+    this.lastNotificationId++;
 
     try {
       await LocalNotifications.schedule({

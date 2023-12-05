@@ -36,6 +36,7 @@ export class QrPage implements OnInit {
   scanResult: string | null = null;
   loading!: HTMLIonLoadingElement;
   mostrarCarta: boolean = false;
+  tables!: any[];
 
   constructor(
     private auth: AuthService,
@@ -74,21 +75,11 @@ export class QrPage implements OnInit {
             const table = reservationData.table
             const active = reservationData.active
             const saleId = saleData._id;
-            console.log('Request');
-            console.log(saleId);
-            console.log(table);
-            console.log(active);
             this.mostrarCarta = true;
-            // localStorage.setItem('reservationData', JSON.stringify(reservationData));
-            // localStorage.setItem('saleData', JSON.stringify(saleData));
-            // sessionStorage.setItem('reservationData', JSON.stringify(reservationData));
-            // sessionStorage.setItem('saleData', JSON.stringify(saleData));
             localStorage.setItem('saleId', saleId);
             localStorage.setItem('table', table);
             localStorage.setItem('active', String(active));
             sessionStorage.setItem('saleId', saleId);
-            // this.sharedDataService.setReservations(reservationData);
-            // this.sharedDataService.setSales(saleData);
             this.router.navigate(['clientes', token, 'tab2'], {
               queryParams: {
                 saleId: saleId,
@@ -183,7 +174,6 @@ export class QrPage implements OnInit {
         this.scanActive = false;
         this.scanResult = code.data;
         this.scanResultAvailable = true;
-        // console.log('Respuesta', this.scanResult)
       } else {
         if (this.scanActive) {
           requestAnimationFrame(this.scan.bind(this));
@@ -214,7 +204,6 @@ export class QrPage implements OnInit {
           const code = jsQR(imageData.data, imageData.width, imageData.height, {
             inversionAttempts: 'dontInvert'
           });
-
           if (code) {
             this.scanResult = code.data;
             this.scanResultAvailable = true;

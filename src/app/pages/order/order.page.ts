@@ -42,7 +42,7 @@ export class OrderPage implements OnInit {
   }
 
   allOrdersDelivered(): boolean {
-    return this.orders.every(order => order.status === '651b3f82faa294650dc1ec28');
+    return this.orders.every(order => order.status === '651b2fdccdeb9672527e1d70');
   }
 
   async ngOnInit() {
@@ -110,6 +110,26 @@ export class OrderPage implements OnInit {
     }
     return { name: 'Unknown', color: 'warning' };
   }
+  groupOrdersByFoodName(orders: Order[]): Order[][] {
+    const groupedOrders: { [key: string]: Order[] } = {};
+    orders.forEach(order => {
+      const foodName = order.food.name;
+      if (groupedOrders[foodName]) {
+        groupedOrders[foodName].push(order);
+      } else {
+        groupedOrders[foodName] = [order];
+      }
+    });
+    return Object.values(groupedOrders);
+  }
+
+  calculateTotalQuantity(orders: Order[]): number {
+    return orders.length;
+  }
+
+  calculateTotalPrice(orders: Order[]): number {
+    return orders.reduce((total, order) => total + order.food.price, 0);
+  }
   pay() {
     this.router.navigate(['/clientes', this.token, 'foodmodal', 'order', 'pay']);
   }
@@ -117,11 +137,12 @@ export class OrderPage implements OnInit {
   async help() {
     const alert = await this.alertController.create({
       header: 'Mesero',
+      mode: 'ios',
       inputs: [
         {
           name: 'Enviar Mesaje a mesero',
           type: 'text',
-          placeholder: 'Ingrese un mensaje para el mesero'
+          placeholder: 'Ingrese un mensaje para el mesero',
         }
       ],
       buttons: [
@@ -130,12 +151,10 @@ export class OrderPage implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            console.log('Cancelado');
           }
         }, {
           text: 'Aceptar',
           handler: (data) => {
-            console.log('Nombre ingresado:', data.inputNombre);
             this.toastService.showToast('Mensaje a mesero enviado ', 'success', 3000);
           }
         }

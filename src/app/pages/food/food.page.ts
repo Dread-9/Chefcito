@@ -55,6 +55,7 @@ export class FoodPage implements OnInit {
     const alert = await this.alertController.create({
       header: 'Confirmación',
       message: `¿Deseas agregar "${producto.name}" al carrito?`,
+      mode: 'ios',
       inputs: [
         {
           name: 'comentario',

@@ -36,17 +36,23 @@
     <ion-button fill="outline" (click)="settings()">
       <ion-icon name="settings-outline"></ion-icon>
     </ion-button>
-    <ion-button fill="outline" (click)="onLogoutClick()">
+    <ion-button fill="outline" (click)="onLogoutClick()" color="danger">
       <ion-icon name="log-out-outline"></ion-icon>
     </ion-button>
   </div>
   <!-- <ion-card class="ion-activatable" *ngIf="user && !user.verified">
-    <ion-card-content class="custom-card-content">
-      <ion-button (click)="verify()">Verificar Usuario</ion-button>
+    <ion-card-header>
+      <ion-card-title>Verificaccion</ion-card-title>
+      <ion-card-subtitle>Quieres verificar tu usuario?</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      Verifica tu cuenta en nuestra app para una experiencia segura y exclusiva.
+      <p></p>
     </ion-card-content>
+    <ion-button class="custom-card-content" fill="clear" (click)="verify()">Verificar</ion-button>
     <ion-ripple-effect></ion-ripple-effect>
-  </ion-card>
-  <ion-card class="ion-activatable" >
+  </ion-card> -->
+  <!-- <ion-card class="ion-activatable" >
     <ion-card-content>
       <ion-list class="border" lines="none">
         <ion-item>

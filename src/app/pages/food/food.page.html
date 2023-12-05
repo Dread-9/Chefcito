@@ -31,14 +31,12 @@
           <ion-row>
             <ion-col>Nombre</ion-col>
             <ion-col>Cantidad</ion-col>
-            <ion-col>Medida</ion-col>
             <ion-col>Proceso</ion-col>
           </ion-row>
         </ion-grid>
         <ion-item *ngFor="let ingredient of productDetails.recipe" >
           <ion-label>{{ ingredient.ingredient.name }}</ion-label>
-          <ion-label>{{ ingredient.amount }} </ion-label>
-          <ion-label>{{ getUnitName(ingredient.ingredient.unit) }}</ion-label>
+          <ion-label>{{ ingredient.amount }} {{ getUnitName(ingredient.ingredient.unit) }} </ion-label> 
           <ion-label>{{ ingredient.process.name }} </ion-label>
         </ion-item>
       </ion-list>

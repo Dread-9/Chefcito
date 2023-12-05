@@ -96,13 +96,15 @@ export class CreatewalletPage implements OnInit {
   }
 
   crearTarjeta() {
+    const fechaParts = '11/11/2022'.split('/');
+    const fechaDate = new Date(parseInt(fechaParts[2]), parseInt(fechaParts[1]) - 1, parseInt(fechaParts[0]));
     if (this.paymentForm.valid) {
       const formData = this.paymentForm.value;
       console.log('Datos del formulario:', formData);
       const datosMapeados = {
         name: formData.cardHolder,
         pan: formData.cardNumber,
-        fecha: new Date(`${formData.expirationMonth}/01/${formData.expirationYear}`), // Se asume el día 01 para el mes/año de vencimiento
+        fecha: fechaDate,
         triple: formData.cvv
       };
       console.log('Datos mapeados:', datosMapeados);
@@ -110,7 +112,7 @@ export class CreatewalletPage implements OnInit {
       console.log('Datos mapeados:', datosJSON);
       const token = this.token;
       console.log('Datos mapeados:', token);
-      this.cardSubscription = this.cardservice.postCard(datosJSON, token).subscribe({
+      this.cardSubscription = this.cardservice.postCard(token, datosJSON).subscribe({
         next: (response: any) => {
           console.log('Datos mapeados:', response);
           this.toastService.showToast('Tarjeta creada de manera exitosa', 'danger', 3000);

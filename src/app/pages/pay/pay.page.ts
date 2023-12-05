@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { LocalNotificationsService } from '../../services/local-notifications.service';
 import { ToastService } from '../../services/toast.service';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { ActionSheetController, AlertController, LoadingController } from '@ionic/angular';
 import { OrderService } from '../../services/order.service';
 import { Order } from '../../models/interfaceOrder';
 import { SharedService } from '../../services/shared.service';
@@ -33,6 +33,7 @@ export class PayPage implements OnInit {
   mostrarCarta: boolean = false;
   showContent: boolean = true;
   showPaymentElement: boolean = false;
+  isActionSheetOpen = false;
   constructor(
     private toastService: ToastService,
     private auth: AuthService,
@@ -43,7 +44,8 @@ export class PayPage implements OnInit {
     private orderService: OrderService,
     sharedDataService: SharedService,
     private userService: UserService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    public actionSheetController: ActionSheetController
   ) {
     this.sharedDataService = sharedDataService;
     this.saleId = localStorage.getItem('saleId');
@@ -74,6 +76,7 @@ export class PayPage implements OnInit {
     this.userEmail = this.user.mail;
     console.log('Correo electrónico del usuario:', this.userEmail);
   }
+
 
   getTotal(): number {
     let total = 0;
@@ -109,15 +112,46 @@ export class PayPage implements OnInit {
     if (this.propinaIngresada !== null) {
       propina = this.propinaIngresada;
     }
-
     const totalPagar = totalProductos + iva + propina;
     return totalPagar;
   }
-  async pago() {
-    const modal = await this.modalController.create({
-      component: PopoverComponent,
-      cssClass: 'tu-modal-css' // Clase CSS para estilizar tu modal
+
+  async abrirActionSheet() {
+    let pedidoText = '';
+    if (this.orders && this.orders.length > 0) {
+      pedidoText = 'Detalles del pedido:\n';
+      this.orders.forEach(order => {
+        pedidoText += `- ${order.food.name} - $${order.food.price} pesos\n`;
+      });
+    } else {
+      pedidoText = 'No hay pedidos.';
+    }
+
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Pagar',
+      mode: 'ios',
+      buttons: [
+        {
+          text: 'Hacer Pedido',
+          handler: () => {
+            this.pago();
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          data: {
+            action: 'cancel',
+          },
+        },
+      ]
     });
+
+    await actionSheet.present();
+  }
+
+
+  async pago() {
     const loading = await this.loadingController.create({
       message: 'Generando Pago...',
       duration: 3000
@@ -136,7 +170,6 @@ export class PayPage implements OnInit {
         {
           text: 'Pagar',
           handler: async () => {
-            await modal.present();
             const saleId = localStorage.getItem('saleId');
             if (!saleId) {
               this.toastService.showToast('No se encontró Id de venta', 'danger', 3000);
@@ -150,18 +183,24 @@ export class PayPage implements OnInit {
                 localStorage.removeItem('active');
                 sessionStorage.removeItem('saleId');
                 this.mostrarCarta = false;
-                setTimeout(() => {
-                  loading.present();
-                  this.router.navigate(['clientes', this.token, 'tab1']);
-                  this.generatePDF();
-                  this.toastService.showToast('Se ha realizado el pago de manera exitosa', 'success', 3000);
-                  this.localNotificationsService.scheduleNotification(
-                    'Pago de orden',
-                    `Se ha realizado el pago de manera exitosa`,
-                    new Date(new Date().getTime() + 3000)
-                  );
-                  modal.dismiss();
-                }, 10000);
+                loading.present();
+                this.router.navigate(['clientes', this.token, 'tab1']);
+                this.toastService.showToast('Se ha realizado el pago de manera exitosa', 'success', 3000);
+                this.localNotificationsService.scheduleNotification(
+                  'Pago de orden',
+                  `Se ha realizado el pago de manera exitosa`,
+                  new Date(new Date().getTime() + 3000)
+                );
+                // setTimeout(() => {
+                //   loading.present();
+                //   this.router.navigate(['clientes', this.token, 'tab1']);
+                //   this.toastService.showToast('Se ha realizado el pago de manera exitosa', 'success', 3000);
+                //   this.localNotificationsService.scheduleNotification(
+                //     'Pago de orden',
+                //     `Se ha realizado el pago de manera exitosa`,
+                //     new Date(new Date().getTime() + 3000)
+                //   );
+                // }, 10000);
               },
               error: (error) => {
                 const errorData = error.error;
@@ -173,44 +212,5 @@ export class PayPage implements OnInit {
       ]
     });
     await alert.present();
-  }
-  generatePDF(): void {
-    const documentDefinition: TDocumentDefinitions = {
-      pageSize: { width: 400, height: 800 }, // Tamaño de la hoja más larga
-      pageMargins: [20, 20, 20, 20], // Márgenes
-      content: [
-        { text: 'Boleta de Compra', style: 'header' },
-        { text: 'Detalles de la orden:', style: 'subheader' },
-        { text: '------------------------------------', style: 'divider' },
-        this.generateProductList(),
-        { text: '------------------------------------', style: 'divider' },
-        { text: { text: `Total a pagar: $${this.getTotalAPagar()} pesos`, bold: false, fontSize: 10 }, style: 'total' }, // Texto más delgado y pequeño
-        { text: { text: `Iva: $${this.getIva()} pesos`, bold: false, fontSize: 10 }, style: 'details' }, // Texto más delgado y pequeño
-        { text: { text: `Propina: $${this.getPropina()} pesos`, bold: false, fontSize: 10 }, style: 'details' }, // Texto más delgado y pequeño
-        { text: '------------------------------------', style: 'divider' },
-        { text: '¡Gracias por su compra!', style: 'footer' }
-      ],
-      styles: {
-        logo: { alignment: 'center', margin: [0, 10, 0, 20] },
-        header: { fontSize: 14, bold: true, alignment: 'center', margin: [0, 0, 0, 10] },
-        subheader: { fontSize: 10, bold: true, margin: [0, 10, 0, 5] },
-        divider: { margin: [0, 5, 0, 5], alignment: 'center' },
-        total: { fontSize: 8, margin: [0, 10, 0, 10], alignment: 'center' },
-        details: { fontSize: 8, margin: [0, 5, 0, 5], alignment: 'center' },
-        footer: { fontSize: 8, bold: true, alignment: 'center', margin: [0, 10, 0, 0] },
-      },
-    };
-    const pdfDocGenerator = pdfMake.createPdf(documentDefinition);
-    pdfDocGenerator.download('boleta_de_compra.pdf');
-  }
-
-  generateProductList(): any[] {
-    const productList = this.orders.map(order => {
-      return [
-        { text: order.food.name, style: 'product' },
-        { text: { text: `$${order.food.price} pesos`, bold: false, fontSize: 8 }, style: 'price', alignment: 'right' },
-      ];
-    });
-    return productList;
   }
 }

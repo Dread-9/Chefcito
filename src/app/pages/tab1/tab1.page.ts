@@ -48,15 +48,10 @@ export class Tab1Page implements OnInit {
     this.saleId = localStorage.getItem('saleId');
   }
 
-  async ngOnInit() {
-    this.token = this.auth.getToken();
-    this.order();
-    this.typeOrder();
-    this.getFoodTypes();
-  }
-
   async doRefresh(event: any) {
     console.log('Recargando...');
+    this.sharedDataService = this.sharedDataService;
+    this.saleId = localStorage.getItem('saleId');
     this.getFoodTypes();
     this.token = this.auth.getToken();
     this.order();
@@ -64,8 +59,13 @@ export class Tab1Page implements OnInit {
     this.user = this.userService.getUser();
     this.saleId = localStorage.getItem('saleId');
     event.target.complete();
-    this.getStatusInfo('651b3f82faa294650dc1ec28');
-    this.getStatusName('Orden lista');
+  }
+
+  async ngOnInit() {
+    this.token = this.auth.getToken();
+    this.order();
+    this.typeOrder();
+    this.getFoodTypes();
   }
 
   ionViewWillEnter() {
@@ -73,7 +73,7 @@ export class Tab1Page implements OnInit {
   }
 
   allOrdersDelivered(): boolean {
-    return this.orders.every(order => order.status === '651b3f82faa294650dc1ec28');
+    return this.orders.every(order => order.status === '651b2fdccdeb9672527e1d70');
   }
 
 
@@ -84,9 +84,6 @@ export class Tab1Page implements OnInit {
         next: (response) => {
           console.log(response);
           this.orders = response as Order[];
-          // if (this.allOrdersDelivered()) {
-          //   this.toastService.showToast('¡Puedes pagar la orden!', 'success', 3000);
-          // }
         },
         error: (error) => {
           const errorData = error.error;
@@ -141,6 +138,27 @@ export class Tab1Page implements OnInit {
         console.error('Error fetching food types:', error);
       }
     );
+  }
+
+  groupOrdersByFoodName(orders: Order[]): Order[][] {
+    const groupedOrders: { [key: string]: Order[] } = {};
+    orders.forEach(order => {
+      const foodName = order.food.name;
+      if (groupedOrders[foodName]) {
+        groupedOrders[foodName].push(order);
+      } else {
+        groupedOrders[foodName] = [order];
+      }
+    });
+    return Object.values(groupedOrders);
+  }
+
+  calculateTotalQuantity(orders: Order[]): number {
+    return orders.length;
+  }
+
+  calculateTotalPrice(orders: Order[]): number {
+    return orders.reduce((total, order) => total + order.food.price, 0);
   }
   navigateToSegment(foodTypeId: string) {
     this.router.navigate(['/clientes/' + this.token + '/tab2'], { queryParams: { foodType: foodTypeId } });

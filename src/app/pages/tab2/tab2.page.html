@@ -2,7 +2,7 @@
   <ion-refresher slot="fixed">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <ion-card class="ion-activatable" *ngIf="mostrarCarta">
+  <ion-card class="ion-activatable" *ngIf="mostrarCarta && mesaEncontrada">
     <ion-card-header>
       <ion-card-title class="ion-text-center">Reserva</ion-card-title>
     </ion-card-header>
@@ -10,11 +10,12 @@
       <ion-list class="border" lines="none">
         <ion-item>
           <ion-list lines="none" >
-            <ion-label color="primary">Id: {{ saleId }}</ion-label>
-            <ion-label color="primary">Mesa reservada: {{ table }}</ion-label>
-            <ion-label color="primary">Activa: {{ active }}</ion-label>
-            <ion-label *ngIf="user" color="primary"> Usuario: {{user.name}} {{user.lastName}}</ion-label>
-            <ion-label color="primary">Fecha de reserva:{{fechaA}} </ion-label>
+            <!-- <ion-label color="primary">Mesa reservada: {{ table }}</ion-label> -->
+            <ion-label>Número de mesa: {{ mesaEncontrada.num }}</ion-label>
+            <ion-label>Cantidad de maxima: {{ mesaEncontrada.size }} personas</ion-label>
+            <ion-label >Activa: <ion-icon [name]="active ? 'radio-button-on-outline' : 'radio-button-off'" [color]="active ? 'success' : 'danger'"></ion-icon></ion-label>
+            <ion-label *ngIf="user"> Usuario: {{user.name}} {{user.lastName}}</ion-label>
+            <ion-label >Fecha de reserva:{{fechaA}} </ion-label>
           </ion-list>
           <ion-icon name="trash-outline" slot="end" (click)="cancelReservation()" color="danger"></ion-icon>
         </ion-item>

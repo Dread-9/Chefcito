@@ -34,19 +34,6 @@ export class ShoppingCartService {
     localStorage.setItem('cartItems', JSON.stringify(this.cartItems)); // Actualizar localStorage
     this.cartSubject.next([...this.cartItems]);
   }
-  // eliminarDelCarrito(producto: Food) {
-  //   const item = this.cartItems.find((item) => item.product._id === producto._id);
-  //   if (item) {
-  //     if (item.quantity > 1) {
-  //       item.quantity--;
-  //     } else {
-  //       const index = this.cartItems.indexOf(item);
-  //       this.cartItems.splice(index, 1);
-  //     }
-  //   }
-  //   localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
-  //   this.cartSubject.next([...this.cartItems]);
-  // }
   eliminarDelCarrito(producto: Food) {
     const itemIndex = this.cartItems.findIndex((item) => item.product._id === producto._id);
     if (itemIndex !== -1) {
@@ -68,11 +55,6 @@ export class ShoppingCartService {
     localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
     this.cartSubject.next([...this.cartItems]);
   }
-
-
-  // obtenerCarrito() {
-  //   return this.cartItems;
-  // }
   obtenerCarrito() {
     const storedCart = localStorage.getItem('cartItems');
     return storedCart ? JSON.parse(storedCart) : [];

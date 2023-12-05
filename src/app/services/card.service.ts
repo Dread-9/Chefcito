@@ -16,14 +16,14 @@ export class CardService {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
     });
-    return this.http.put(url, token, { headers });
+    return this.http.get(url, { headers });
   }
   postCard(token: string, formdata: string): Observable<any> {
     const url = `${serverEndpoint.url.urlCard.card.createCard}`;
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
     });
-    return this.http.put(url, formdata, { headers });
+    return this.http.post(url, formdata, { headers });
   }
 
   deleteCard(id: string, token: string): Observable<any> {
@@ -31,6 +31,6 @@ export class CardService {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
     });
-    return this.http.put(url, id, { headers });
+    return this.http.delete(url, { headers });
   }
 }

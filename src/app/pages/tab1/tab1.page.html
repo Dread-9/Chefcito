@@ -37,7 +37,7 @@
         <ion-item >
           <ion-list lines="none">Revisa <ion-text color="primary" [routerLink]="['/clientes/'+ token +'/tab2']"> Aqui</ion-text> Nuestro Menu
           </ion-list>
-          <ion-icon color="primary" name="receipt-outline" slot="end" ></ion-icon>          
+          <ion-icon color="primary" name="receipt-outline" slot="end" ></ion-icon>
         </ion-item>
       </ion-list>
     </ion-card-content>
@@ -46,10 +46,14 @@
   <!-- <swiper-container (slidechange)="swiperSlideChange($event)" [loop]="true" [pagination]="true">
     <swiper-slide *ngFor="let foodType of foodTypes">
       <ion-card (click)="navigateToSegment(foodType._id)">
-        <ion-img src="" style="height: 270px; border-radius: 1rem !important;"></ion-img>
+        <ion-img [src]="foodType.img" alt="{{ foodType.name }}" style="height: 270px; border-radius: 1rem !important;"></ion-img>
       </ion-card>
     </swiper-slide>
   </swiper-container> -->
+  <ion-card class="card ion-activatable">
+    <img alt="chefcito" src="../../../assets/img/card.png" />
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-card>
   <ion-card *ngIf="orders && orders.length > 0">
     <div class="logo-container">
       <img class="logo" alt="Logo" src="../../../assets/icon/favicon.png" />
@@ -58,18 +62,19 @@
       <ion-card-title>Productos Ordenados</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-list *ngFor="let order of orders">
-        <ion-item>
+      <ion-list>
+        <ion-item *ngFor="let groupedOrder of groupOrdersByFoodName(orders)">
           <ion-thumbnail slot="start">
-            <img [src]="order.food.img" alt="{{ order.food.name }}" />
+            <img [src]="groupedOrder[0].food.img" alt="{{ groupedOrder[0].food.name }}" />
           </ion-thumbnail>
           <ion-label>
-            <h2>{{ order.food.name }}</h2>
-            <p>Comentario: {{ order.desc }}</p>
-            <ion-chip [color]="getStatusInfo(order.status).color">{{ getStatusInfo(order.status).name }}</ion-chip>
-            <p>Precio: ${{ order.food.price }} pesos</p>
+            <h2>{{ groupedOrder[0].food.name }}</h2>
+            <p>Comentario: {{ groupedOrder[0].desc }}</p>
+            <ion-chip [color]="getStatusInfo(groupedOrder[0].status).color">{{ getStatusInfo(groupedOrder[0].status).name }}</ion-chip>
+            <p>Cantidad: {{ calculateTotalQuantity(groupedOrder) }}</p>
+            <p>Precio total: ${{ calculateTotalPrice(groupedOrder) }} pesos</p>
           </ion-label>
-          <ion-icon slot="end" name="arrow-forward-circle-outline" [color]="getStatusInfo(order.status).color" [routerLink]="['/clientes/'+ token +'/foodmodal'+'/order']"></ion-icon>
+          <ion-icon slot="end" name="arrow-forward-circle-outline" [color]="getStatusInfo(groupedOrder[0].status).color" [routerLink]="['/clientes/'+ token +'/foodmodal'+'/order']"></ion-icon>
         </ion-item>
       </ion-list>
     </ion-card-content>

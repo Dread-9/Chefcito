@@ -17,13 +17,7 @@ export class OrderService {
     });
     return this.http.post(serverEndpoint.url.urlOrder.orders.order, requestBody, { headers });
   }
-  // getOrder(token: string): Observable<Order[]> {
-  //   const headers = new HttpHeaders({
-  //     'Authorization': `Bearer ${token}`,
-  //     'Content-Type': 'application/json'
-  //   });
-  //   return this.http.get<Order[]>(serverEndpoint.url.urlOrder.orders.order, { headers });
-  // }
+
   getOrderById(token: string, ordersale: string): Observable<Object> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
@@ -32,6 +26,7 @@ export class OrderService {
     const url = `${serverEndpoint.url.urlOrder.orders.orderbysale}/${ordersale}`;
     return this.http.get(url, { headers });
   }
+
   getState(): Observable<Object> {
     return this.http.get(serverEndpoint.url.urlOrder.orders.typeorder);
   }

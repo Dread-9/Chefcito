@@ -193,29 +193,6 @@ export class FoodmodalPage implements OnInit {
       })
       .then((alert) => alert.present());
   }
-  // aumentarCantidad(item: { product: Food; quantity: number }) {
-  //   const nuevoCarrito = this.shoppingCartService.obtenerCarrito().map((cartItem: { product: Food; quantity: number }) => {
-  //     if (cartItem.product._id === item.product._id) {
-  //       return { ...cartItem, quantity: cartItem.quantity + 1 };
-  //     }
-  //     return cartItem;
-  //   });
-  //   this.actualizarCarrito(nuevoCarrito);
-  // }
-
-  // disminuirCantidad(item: { product: Food; quantity: number }) {
-  //   const nuevoCarrito = this.shoppingCartService.obtenerCarrito().map((cartItem: { product: Food; quantity: number }) => {
-  //     if (cartItem.product._id === item.product._id && cartItem.quantity > 1) {
-  //       return { ...cartItem, quantity: cartItem.quantity - 1 };
-  //     }
-  //     return cartItem;
-  //   });
-  //   this.actualizarCarrito(nuevoCarrito);
-  // }
-
-  // private actualizarCarrito(nuevoCarrito: { product: Food; quantity: number }[]) {
-  //   this.shoppingCartService.actualizarCarrito(nuevoCarrito);
-  // }
   aumentarCantidad(item: { product: Food; quantity: number }) {
     const nuevoCarrito = this.shoppingCartService.obtenerCarrito().map((cartItem: { product: Food; quantity: number }) => {
       if (cartItem.product._id === item.product._id) {

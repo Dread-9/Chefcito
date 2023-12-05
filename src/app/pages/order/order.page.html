@@ -13,27 +13,22 @@
   </ion-refresher>
   <ion-card *ngIf="orders">
     <ion-card-content>
-      <ion-list *ngFor="let order of orders">
-        <ion-item>
+      <ion-list>
+        <ion-item *ngFor="let groupedOrder of groupOrdersByFoodName(orders)">
           <ion-thumbnail slot="start">
-            <img [src]="order.food.img" alt="{{ order.food.name }}" />
+            <img [src]="groupedOrder[0].food.img" alt="{{ groupedOrder[0].food.name }}" />
           </ion-thumbnail>
           <ion-label>
-            <h2>{{ order.food.name }}</h2>
-            <p>Comentario: {{ order.desc }}</p>
-            <ion-chip [color]="getStatusInfo(order.status).color">{{ getStatusInfo(order.status).name }}</ion-chip>
-            <!-- <ion-chip color="primary">{{ getStatusName(order.status) }}</ion-chip> -->
-            <!-- <ion-chip color="primary">{{ order.status }}</ion-chip> -->
-            <p>Precio: ${{ order.food.price }} pesos</p>
+            <h2>{{ groupedOrder[0].food.name }}</h2>
+            <p>Comentario: {{ groupedOrder[0].desc }}</p>
+            <ion-chip [color]="getStatusInfo(groupedOrder[0].status).color">{{ getStatusInfo(groupedOrder[0].status).name }}</ion-chip>
+            <p>Cantidad: {{ calculateTotalQuantity(groupedOrder) }}</p>
+            <p>Precio total: ${{ calculateTotalPrice(groupedOrder) }} pesos</p>
           </ion-label>
         </ion-item>
-        <!-- <ion-item *ngFor="let order of orders">
-          <ion-chip [color]="getStatusInfo(order.status).color">{{ getStatusInfo(order.status).name }}</ion-chip>
-          <ion-chip color="primary">{{ getStatusName(order.status) }}</ion-chip>
-        </ion-item> -->
       </ion-list>
     </ion-card-content>
-  </ion-card>
+  </ion-card>  
   <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
     <ion-fab-button>
       <ion-icon name="chevron-forward-circle"></ion-icon>

@@ -8,15 +8,18 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" >
-  <ion-list *ngIf="orders" >
+  <ion-list *ngIf="orders">
     <ion-item *ngFor="let order of orders">
+      <ion-avatar aria-hidden="true" slot="start">
+        <img [src]="order.food.img" alt="{{ order.food.name }}" />
+      </ion-avatar>
       <ion-label>{{ order.food.name }}</ion-label>
       <ion-label color="primary">${{ order.food.price }} pesos</ion-label>
     </ion-item>
   </ion-list>
   <ion-card>
     <ion-card-header>
-      <ion-card-title>Desea agregar propina</ion-card-title>
+      <ion-card-title>Desea agregar propina:</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <ion-list>
@@ -29,7 +32,7 @@
           <p>Monto sugerido 10%</p>
         </ion-item>
         <ion-item>
-          <p>Monto sugerido: {{ getPropinaSugerida() }} </p>
+          <p>Monto sugerido: ${{ getPropinaSugerida() }} pesos </p>
         </ion-item>
         <ion-item>
           <ion-input label="Propina" type="number" placeholder="1000" placeholder="Ingresa monto de propina" [(ngModel)]="propinaIngresada"></ion-input>
@@ -55,5 +58,5 @@
       <ion-label color="success">${{ getTotalAPagar() }} pesos</ion-label>
     </ion-item>
   </ion-list>
-  <ion-button expand="full" (click)="pago()">Pagar</ion-button>
+  <ion-button expand="full" (click)="abrirActionSheet()">Pagar</ion-button>
 </ion-content>

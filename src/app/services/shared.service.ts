@@ -16,9 +16,6 @@ export class SharedService {
 
   constructor(private http: HttpClient) { }
 
-  // setMostrarCarta(value: boolean) {
-  //   this.mostrarCartaSubject.next(value);
-  // }
   setMostrarCarta(value: boolean) {
     this.mostrarCartaSubject.next(value);
     sessionStorage.setItem('mostrarCarta', value ? 'true' : 'false');
@@ -27,7 +24,6 @@ export class SharedService {
 
   setReservations(reservation: Reservation) {
     this.reservations = reservation;
-    // Guardar en localStorage y sessionStorage
     localStorage.setItem('reservationData', JSON.stringify(reservation));
     sessionStorage.setItem('reservationData', JSON.stringify(reservation));
   }
@@ -39,7 +35,6 @@ export class SharedService {
 
   setSales(sale: Sale) {
     this.sales = sale;
-    // Guardar en localStorage y sessionStorage
     localStorage.setItem('saleData', JSON.stringify(sale));
     sessionStorage.setItem('saleData', JSON.stringify(sale));
   }
@@ -50,8 +45,6 @@ export class SharedService {
 
 
   setReservationId(reservationId: string) {
-    this.reservationId = reservationId;
-    // Guardar en localStorage y sessionStorage
     localStorage.setItem('reservationId', reservationId);
     sessionStorage.setItem('reservationId', reservationId);
   }
@@ -74,7 +67,7 @@ export class SharedService {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
     });
-    return this.http.put(url, null, { headers });
+    return this.http.get(url, { headers });
   }
 
   getTabla(): Observable<any> {

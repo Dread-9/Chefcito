@@ -43,29 +43,4 @@ export class SettingsModalPage implements OnInit {
       Preferences.set({ key: 'darkModeActivated', value: 'false' });
     }
   }
-
-  async verify() {
-    const userId = this.user._id;
-    console.log(userId);
-    this.auth.verify(userId).subscribe({
-      next: async (result) => {
-        const alert = await this.alertController.create({
-          header: 'Correo enviado',
-          message: 'Se ha enviado un correo para validar tu usuario.',
-          buttons: ['OK']
-        });
-
-        await alert.present();
-
-        this.toastService.showToast(result.msg, 'danger', 3000);
-        console.log('User verification result:', result);
-      },
-      error: (error) => {
-        const errorData = error.error;
-        this.toastService.showToast(errorData.msg, 'danger', 3000);
-        console.error('Error occurred during user verification:', error);
-      }
-    });
-  }
-
 }
