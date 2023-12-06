@@ -1,9 +1,3 @@
-<!-- <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title class="ion-text-center">Login</ion-title>
-  </ion-toolbar>
-</ion-header> -->
-
 <ion-content :fullscreen="true">
   <ion-avatar>
     <img alt="Silhouette of a person's head" src="../../../assets/icon/favicon.png" />
@@ -19,9 +13,6 @@
         <ion-input label="Contraseña" labelPlacement="floating" placeholder="Escribe tu Contraseña" type="password" id="password" [(ngModel)]="LoginFormulario.password" name="password" #password="ngModel" password required> </ion-input>
         <p class="error" *ngIf="password.errors?.['password']">Contraseña invalida</p>
     </ion-item>
-    <!-- <ion-text class="ion-text-end color"  [routerLink]="['/recoverpassword']">
-      <h6>¿Olvidaste Tu Constraseña?</h6>
-    </ion-text> -->
     <ion-button type="submit" expand="block" value="Enviar" [disabled]="!isValidForm(form)">
       Iniciar Sesion
     </ion-button>

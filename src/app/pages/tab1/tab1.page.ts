@@ -10,6 +10,8 @@ import { FoodType } from '../../models/interfaceFood';
 import { Router } from '@angular/router';
 import { register } from 'swiper/element/bundle';
 register();
+import socket from '../../componets/socket';
+
 
 @Component({
   selector: 'app-tab1',
@@ -43,6 +45,10 @@ export class Tab1Page implements OnInit {
     private ngZone: NgZone,
     private foodService: FoodService
   ) {
+    socket.on("updatedOrder", (order: Order) => {
+      console.log('Conectando .... ', order);
+      this.orders = [order, ...this.orders.filter(({ _id }) => !(_id !== order._id))]
+    });
     this.user = this.userService.getUser();
     this.sharedDataService = sharedDataService;
     this.saleId = localStorage.getItem('saleId');

@@ -47,7 +47,7 @@ export class Tab2Page {
     initialSlide: 1,
     speed: 400,
   };
-  mesaEncontrada!: Tables
+  mesaEncontrada!: Tables;
 
   constructor(
     private toastService: ToastService,
@@ -65,7 +65,6 @@ export class Tab2Page {
     this.sharedDataService = sharedDataService;
     this.sharedDataService.getTabla().subscribe((data: Tables[]) => {
       this.Tables = data;
-      console.log('Tables', this.Tables);
       this.buscarMesaPorReserva(this.reservationId);
     });
   }
@@ -99,10 +98,10 @@ export class Tab2Page {
     this.saleId = localStorage.getItem('saleId');
     this.table = localStorage.getItem('table');
     this.active = localStorage.getItem('active');
-    if (this.saleId && this.table && this.active) {
-      this.mostrarCarta = true;
-    }
-    this.buscarMesaPorReserva(this.reservationId);
+    this.sharedDataService.getTabla().subscribe((data: Tables[]) => {
+      this.Tables = data;
+      this.buscarMesaPorReserva(this.reservationId);
+    });
   }
   filterFoodsByName(foods: Food[], searchTerm: string): Food[] {
     if (!searchTerm) {
@@ -111,14 +110,12 @@ export class Tab2Page {
     searchTerm = searchTerm.toLowerCase();
     return foods.filter(food => food.name.toLowerCase().includes(searchTerm));
   }
-  buscarMesaPorReserva(reservationId: string): void {
-    const foundTable = this.Tables.find(table => table.id === reservationId);
-    if (foundTable) {
-      this.mesaEncontrada = foundTable;
-    } else {
-      console.log('No se encontró la mesa correspondiente a la reserva con el ID proporcionado.');
-    }
+  buscarMesaPorReserva(tableId: string): void {
+    const storedTables = JSON.parse(localStorage.getItem('tables') || '[]');
+    const table = storedTables.find((table: any) => table._id === tableId);
+    return table ? table.num.toString() : 'No encontrado';
   }
+
   async cancelReservation() {
     const alert = await this.alertController.create({
       header: '¿Estás seguro de cancelar tu reserva?',

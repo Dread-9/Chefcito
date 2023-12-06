@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" (ionRefresh)="doRefresh($event)">
+<ion-content [fullscreen]="true" (ionRefresh)="doRefresh($event)" onchange="">
   <ion-refresher slot="fixed">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>

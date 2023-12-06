@@ -1,25 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { OrderService } from '../../services/order.service';
 import { Order, OrderStatus } from '../../models/interfaceOrder';
 import { ToastService } from 'src/app/services/toast.service';
 import { SharedService } from '../../services/shared.service';
-import { AlertController, PopoverController } from '@ionic/angular';
-import { PopoverComponent } from 'src/app/componets/popover/popover.component';
+import { AlertController } from '@ionic/angular';
+import socket from '../../componets/socket';
+
 @Component({
   selector: 'app-order',
   templateUrl: './order.page.html',
   styleUrls: ['./order.page.scss'],
-  template: `
-    <ion-list>
-      <ion-item (click)="showHelp()">
-        <ion-label>Necesitas ayuda</ion-label>
-      </ion-item>
-    </ion-list>
-  `
+  template: ``
 })
-export class OrderPage implements OnInit {
+export class OrderPage implements OnInit, OnDestroy, OnChanges {
+
   token: any;
   sharedDataService: SharedService;
   saleId: string | null = null;
@@ -33,8 +29,20 @@ export class OrderPage implements OnInit {
     sharedDataService: SharedService,
     private alertController: AlertController,
   ) {
+
+
     this.sharedDataService = sharedDataService;
     this.saleId = localStorage.getItem('saleId');
+    socket.on("updatedOrder", (order: Order) => {
+      console.log('Conectando .... ', this.orders);
+      this.orders = [order, ...this.orders.filter(({ _id }) => !(_id !== order._id))]
+      console.log('Conectando .... ', this.orders);
+    });
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+  }
+  ngOnDestroy(): void {
+
   }
 
   ionViewWillEnter() {
@@ -162,4 +170,5 @@ export class OrderPage implements OnInit {
     });
     await alert.present();
   }
+
 }
