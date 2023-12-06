@@ -51,10 +51,6 @@ export class FoodmodalPage implements OnInit {
     this.token = this.auth.getToken();
     this.saleId = localStorage.getItem('saleId');
     this.carrito = this.shoppingCartService.obtenerCarrito();
-    // const cartItemsFromStorage = localStorage.getItem('cartItems');
-    // if (cartItemsFromStorage) {
-    //   this.carrito = JSON.parse(cartItemsFromStorage);
-    // }
     this.shoppingCartService.obtenerCarritoObservable().subscribe((carrito) => {
       this.carrito = carrito;
     });

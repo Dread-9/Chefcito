@@ -33,11 +33,11 @@ export class OrderPage implements OnInit, OnDestroy, OnChanges {
 
     this.sharedDataService = sharedDataService;
     this.saleId = localStorage.getItem('saleId');
-    socket.on("updatedOrder", (order: Order) => {
-      console.log('Conectando .... ', this.orders);
-      this.orders = [order, ...this.orders.filter(({ _id }) => !(_id !== order._id))]
-      console.log('Conectando .... ', this.orders);
-    });
+    // socket.on("updatedOrder", (order: Order) => {
+    //   console.log('Conectando .... ', this.orders);
+    //   this.orders = [order, ...this.orders.filter(({ _id }) => !(_id !== order._id))]
+    //   console.log('Conectando .... ', this.orders);
+    // });
   }
   ngOnChanges(changes: SimpleChanges): void {
   }

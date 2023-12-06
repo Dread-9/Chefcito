@@ -11,7 +11,7 @@
         <ion-item>
           <ion-list lines="none" >
               <ion-label >Id: {{ saleId }}</ion-label>
-              <ion-label >Mesa reservada: {{ table }}</ion-label>
+              <!-- <ion-label >Mesa reservada: {{ table }}</ion-label> -->
             <ion-label >Activa: <ion-icon [name]="active ? 'radio-button-on-outline' : 'radio-button-off'" [color]="active ? 'success' : 'danger'"></ion-icon></ion-label>
             <ion-label *ngIf="user"> Usuario: {{user.name}} {{user.lastName}}</ion-label>
             <ion-label >Fecha de reserva:{{fechaA}} </ion-label>
